@@ -1,0 +1,20 @@
+\chapter{Conclusion / Results}
+\label{chap:conclusions}
+
+When developing a tool, it is always important to know how the end user will feel when using it. The following insights were gained by creating two different test scenes and performance tests:
+
+\begin{tabular}{lp{12cm}}
+Development speed: & Once the basic concept of Utility Designer is clear, it was surprisingly fast to create new behaviours with it, as a new state can be created and configured with just a few clicks. Development speed starts to slow down when action nodes need to be implemented manually, so having a good selection of pre-built nodes helps save time. \cr
+Maintenance: & Renaming considerations or even action nodes can sometimes be desirable, but the way Utility Designer is currently implemented makes it rather difficult to do so, as considerations for example are stored as strings. Adding and removing states, on the other hand, is very easy and can be done without having to think about other states, as they are all independent of each other. \cr
+Flexibility: & The ability to use different preconditions and evaluators, to configure scoring in different ways, and the freedom to focus more on the utility AI or behaviour tree part makes the tool very flexible for different scenarios. Utility Designer can also be used as a normal behaviour tree, making it suitable even for scenarios where sequential behaviour is required, such as for a tour guide, where utility AI is not normally a good choice. \cr
+Debugging: & One disadvantage of utility AI is that it is often difficult for developers to know exactly how the agent will behave. The runtime debugging features certainly help to analyse this, but the unpredictability still remains. This is not a major problem, as unpredictability is often desired in a utility AI system. \cr
+Performance & Utility Designer does not seem to be problematic when it comes to performance, as the tests in section \ref{sec:performance_profiling_profiling} have shown. However, it is important to note that it becomes more expensive when there are many states and evaluators, and also when there is a fast tick rate, especially for the evaluation tab.
+\end{tabular}
+
+Overall, developing a tool has shown the many challenges of this task, such as the difficulty of making it easy and secure to maintain with all the different ways users can interact with it. There are also a lot of little things that make the whole development process take longer than one might think, as it requires tons of testing, creating sample scenes, writing good readable documentation, time to prepare it for the Unity Asset Store according to their guidelines, planning the layout and features, or even refactoring parts of the code based on test results.
+
+\newpage
+
+Using Utility Designer in action has shown that the concept of combining utility AI with a behaviour tree works really well together, offering the flexibility of independent states while retaining all the benefits of a behaviour tree. It can sometimes be a bit of a challenge to fine-tune all the weights in a utility AI system to make the agent act in the most efficient way possible. Interestingly, fine-tuning these weights could even be a task for machine learning to make it as good as possible. But the weights do not need to be perfect in most cases. Humans do not make perfect decisions all the time either, and if the weights are not set to the absolute optimum for every scenario, it might even help to represent the mistakes that humans make, thereby increasing realism.
+
+As the Utility Designer is a tool made for the Asset Store, it is very likely that it will continue to be used after this thesis, depending on the feedback it receives from people using it. As it is being submitted as a free asset, there is a good chance that there will be a lot of feedback to implement.

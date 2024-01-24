@@ -1,0 +1,394 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b93118c0574eb542824b91809a335f6, type: 3}
+  m_Name: Agent Behaviour
+  m_EditorClassIdentifier: 
+  stateSets:
+  - states:
+    - preconditions:
+      - designation: Precondition 1
+        considerationDesignation: UD Agent | Energy
+        comparator: 0
+        value: 20
+      evaluators:
+      - designation: Evaluator 1
+        considerationDesignation: UD Agent | Money
+        weight: 1
+        curve:
+          serializedVersion: 2
+          m_Curve:
+          - serializedVersion: 3
+            time: 0
+            value: 1
+            inSlope: -3.1421325
+            outSlope: -3.1421325
+            tangentMode: 34
+            weightedMode: 0
+            inWeight: 0
+            outWeight: 0.33333334
+          - serializedVersion: 3
+            time: 0.2050143
+            value: 0.35581794
+            inSlope: -1.2375518
+            outSlope: -1.2375518
+            tangentMode: 0
+            weightedMode: 0
+            inWeight: 0.33333334
+            outWeight: 0.05914374
+          - serializedVersion: 3
+            time: 1
+            value: 0
+            inSlope: -0.20724852
+            outSlope: -0.20724852
+            tangentMode: 0
+            weightedMode: 0
+            inWeight: 0.07505468
+            outWeight: 0
+          m_PreInfinity: 2
+          m_PostInfinity: 2
+          m_RotationOrder: 4
+        curveMinValue: 0
+        curveMaxValue: 1000
+      behaviourTree:
+        rootNode:
+          rid: 3382527753457238041
+      active: 1
+      designation: Work
+      weight: 1
+      executionFactor: 1.2
+      baseScore: 0.15
+      setMinScore: 0
+      minScore: 0
+      setMaxScore: 0
+      maxScore: 0
+      failChance: 0
+      notes: Gets money over time. Can't work when too tired.
+    - preconditions:
+      - designation: Precondition 1
+        considerationDesignation: UD Agent | Money
+        comparator: 0
+        value: 25
+      evaluators:
+      - designation: Evaluator 1
+        considerationDesignation: UD Agent | Hunger
+        weight: 1
+        curve:
+          serializedVersion: 2
+          m_Curve:
+          - serializedVersion: 3
+            time: 0
+            value: 0
+            inSlope: 1
+            outSlope: 1
+            tangentMode: 34
+            weightedMode: 0
+            inWeight: 0
+            outWeight: 0
+          - serializedVersion: 3
+            time: 1
+            value: 1
+            inSlope: 1
+            outSlope: 1
+            tangentMode: 34
+            weightedMode: 0
+            inWeight: 0
+            outWeight: 0
+          m_PreInfinity: 2
+          m_PostInfinity: 2
+          m_RotationOrder: 4
+        curveMinValue: 0
+        curveMaxValue: 100
+      - designation: Evaluator 2
+        considerationDesignation: UD Agent | Money
+        weight: 0.5
+        curve:
+          serializedVersion: 2
+          m_Curve:
+          - serializedVersion: 3
+            time: 0
+            value: 0
+            inSlope: 0
+            outSlope: 0
+            tangentMode: 0
+            weightedMode: 0
+            inWeight: 0
+            outWeight: 0
+          - serializedVersion: 3
+            time: 1
+            value: 1
+            inSlope: 2
+            outSlope: 2
+            tangentMode: 0
+            weightedMode: 0
+            inWeight: 0
+            outWeight: 0
+          m_PreInfinity: 2
+          m_PostInfinity: 2
+          m_RotationOrder: 4
+        curveMinValue: 0
+        curveMaxValue: 1000
+      behaviourTree:
+        rootNode:
+          rid: 3382527753457238042
+      active: 1
+      designation: Eat
+      weight: 1.5
+      executionFactor: 1.2
+      baseScore: 0
+      setMinScore: 0
+      minScore: 0
+      setMaxScore: 0
+      maxScore: 0
+      failChance: 0
+      notes: The agent spends some money to buy food.
+    - preconditions: []
+      evaluators:
+      - designation: Evaluator 1
+        considerationDesignation: UD Agent | Energy
+        weight: 1
+        curve:
+          serializedVersion: 2
+          m_Curve:
+          - serializedVersion: 3
+            time: 0
+            value: 1
+            inSlope: -1
+            outSlope: -1
+            tangentMode: 34
+            weightedMode: 0
+            inWeight: 0
+            outWeight: 0.33333334
+          - serializedVersion: 3
+            time: 1
+            value: 0
+            inSlope: -1
+            outSlope: -1
+            tangentMode: 34
+            weightedMode: 0
+            inWeight: 0.33333334
+            outWeight: 0
+          m_PreInfinity: 2
+          m_PostInfinity: 2
+          m_RotationOrder: 4
+        curveMinValue: 0
+        curveMaxValue: 100
+      behaviourTree:
+        rootNode:
+          rid: 3382527753457238043
+      active: 1
+      designation: Sleep
+      weight: 1.2
+      executionFactor: 2
+      baseScore: 0.1
+      setMinScore: 0
+      minScore: 0
+      setMaxScore: 0
+      maxScore: 0
+      failChance: 0
+      notes: Gets energy over time.
+    designation: State Set 1
+  considerationSets:
+  - {fileID: 11400000, guid: f046d5ff4a6acf84ba98960782d77514, type: 2}
+  references:
+    version: 2
+    RefIds:
+    - rid: 3382527753457238041
+      type: {class: Root, ns: KadaXuanwu.UtilityDesigner.Scripts.Execution.Runtime,
+        asm: UtilityDesigner}
+      data:
+        guid: ff2a0397dd98c874ba2c1b10dc7fddab
+        position: {x: 375, y: 10}
+        notes: 
+        child:
+          rid: 3382527753457238044
+    - rid: 3382527753457238042
+      type: {class: Root, ns: KadaXuanwu.UtilityDesigner.Scripts.Execution.Runtime,
+        asm: UtilityDesigner}
+      data:
+        guid: ff2a0397dd98c874ba2c1b10dc7fddab
+        position: {x: 375, y: 10}
+        notes: 
+        child:
+          rid: 3382527753457238045
+    - rid: 3382527753457238043
+      type: {class: Root, ns: KadaXuanwu.UtilityDesigner.Scripts.Execution.Runtime,
+        asm: UtilityDesigner}
+      data:
+        guid: ff2a0397dd98c874ba2c1b10dc7fddab
+        position: {x: 375, y: 10}
+        notes: 
+        child:
+          rid: 3382527753457238046
+    - rid: 3382527753457238044
+      type: {class: Repeat, ns: KadaXuanwu.UtilityDesigner.Scripts.Execution.Decorators,
+        asm: UtilityDesigner}
+      data:
+        guid: f5e6378a9675cfd498b33e33fb40058f
+        position: {x: 375, y: 82}
+        notes: 
+        child:
+          rid: 3382527753457238047
+    - rid: 3382527753457238045
+      type: {class: Repeat, ns: KadaXuanwu.UtilityDesigner.Scripts.Execution.Decorators,
+        asm: UtilityDesigner}
+      data:
+        guid: f5e6378a9675cfd498b33e33fb40058f
+        position: {x: 375, y: 82}
+        notes: 
+        child:
+          rid: 3382527753457238048
+    - rid: 3382527753457238046
+      type: {class: Repeat, ns: KadaXuanwu.UtilityDesigner.Scripts.Execution.Decorators,
+        asm: UtilityDesigner}
+      data:
+        guid: f5e6378a9675cfd498b33e33fb40058f
+        position: {x: 375, y: 82}
+        notes: 
+        child:
+          rid: 3382527753457238049
+    - rid: 3382527753457238047
+      type: {class: Sequence, ns: KadaXuanwu.UtilityDesigner.Scripts.Execution.Composites,
+        asm: UtilityDesigner}
+      data:
+        guid: 947ec78a1118b724e872bf21d04b606d
+        position: {x: 375, y: 170}
+        notes: 
+        children:
+        - rid: 3382527753457238050
+        - rid: 3382527753457238051
+        - rid: 3382527753457238052
+    - rid: 3382527753457238048
+      type: {class: Sequence, ns: KadaXuanwu.UtilityDesigner.Scripts.Execution.Composites,
+        asm: UtilityDesigner}
+      data:
+        guid: 947ec78a1118b724e872bf21d04b606d
+        position: {x: 375, y: 170}
+        notes: 
+        children:
+        - rid: 3382527753457238053
+        - rid: 3382527753457238054
+        - rid: 3382527753457238055
+        - rid: 3382527753457238059
+    - rid: 3382527753457238049
+      type: {class: Sequence, ns: KadaXuanwu.UtilityDesigner.Scripts.Execution.Composites,
+        asm: UtilityDesigner}
+      data:
+        guid: 947ec78a1118b724e872bf21d04b606d
+        position: {x: 375, y: 170}
+        notes: 
+        children:
+        - rid: 3382527753457238056
+        - rid: 3382527753457238057
+        - rid: 3382527753457238058
+    - rid: 3382527753457238050
+      type: {class: MoveToTransform, ns: KadaXuanwu.UtilityDesigner.Scripts.Execution.Actions,
+        asm: UtilityDesigner}
+      data:
+        guid: d76846bbfdaa3954d9af93f96c251d84
+        position: {x: 215, y: 293}
+        notes: 
+        _locationIndex: 0
+        setSpeed: 0
+        speed: 0
+        setStoppingDistance: 0
+        stoppingDistance: 0
+    - rid: 3382527753457238051
+      type: {class: WaitFixed, ns: KadaXuanwu.UtilityDesigner.Scripts.Execution.Actions,
+        asm: UtilityDesigner}
+      data:
+        guid: d178258a8d0a0c64b9ba77049818d8e3
+        position: {x: 375, y: 293}
+        notes: 
+        duration: 0.1
+        useRealTime: 0
+    - rid: 3382527753457238052
+      type: {class: ChangeConsideration, ns: KadaXuanwu.UtilityDesigner.Scripts.Execution.Actions,
+        asm: UtilityDesigner}
+      data:
+        guid: e67482ac9721b5d4fac3c17e6c9f1345
+        position: {x: 525, y: 293}
+        notes: 
+        considerationSetName: UD Agent
+        considerationName: Money
+        amount: 1.5
+    - rid: 3382527753457238053
+      type: {class: MoveToTransform, ns: KadaXuanwu.UtilityDesigner.Scripts.Execution.Actions,
+        asm: UtilityDesigner}
+      data:
+        guid: d76846bbfdaa3954d9af93f96c251d84
+        position: {x: 215, y: 293}
+        notes: 
+        _locationIndex: 1
+        setSpeed: 0
+        speed: 0
+        setStoppingDistance: 0
+        stoppingDistance: 0
+    - rid: 3382527753457238054
+      type: {class: WaitFixed, ns: KadaXuanwu.UtilityDesigner.Scripts.Execution.Actions,
+        asm: UtilityDesigner}
+      data:
+        guid: d178258a8d0a0c64b9ba77049818d8e3
+        position: {x: 375, y: 293}
+        notes: 
+        duration: 1
+        useRealTime: 0
+    - rid: 3382527753457238055
+      type: {class: ChangeConsideration, ns: KadaXuanwu.UtilityDesigner.Scripts.Execution.Actions,
+        asm: UtilityDesigner}
+      data:
+        guid: e67482ac9721b5d4fac3c17e6c9f1345
+        position: {x: 525, y: 293}
+        notes: 
+        considerationSetName: UD Agent
+        considerationName: Money
+        amount: -25
+    - rid: 3382527753457238056
+      type: {class: MoveToTransform, ns: KadaXuanwu.UtilityDesigner.Scripts.Execution.Actions,
+        asm: UtilityDesigner}
+      data:
+        guid: d76846bbfdaa3954d9af93f96c251d84
+        position: {x: 215, y: 293}
+        notes: 
+        _locationIndex: 2
+        setSpeed: 0
+        speed: 0
+        setStoppingDistance: 0
+        stoppingDistance: 0
+    - rid: 3382527753457238057
+      type: {class: WaitFixed, ns: KadaXuanwu.UtilityDesigner.Scripts.Execution.Actions,
+        asm: UtilityDesigner}
+      data:
+        guid: d178258a8d0a0c64b9ba77049818d8e3
+        position: {x: 375, y: 293}
+        notes: 
+        duration: 0.1
+        useRealTime: 0
+    - rid: 3382527753457238058
+      type: {class: ChangeConsideration, ns: KadaXuanwu.UtilityDesigner.Scripts.Execution.Actions,
+        asm: UtilityDesigner}
+      data:
+        guid: e67482ac9721b5d4fac3c17e6c9f1345
+        position: {x: 525, y: 293}
+        notes: 
+        considerationSetName: UD Agent
+        considerationName: Energy
+        amount: 2
+    - rid: 3382527753457238059
+      type: {class: ChangeConsideration, ns: KadaXuanwu.UtilityDesigner.Scripts.Execution.Actions,
+        asm: UtilityDesigner}
+      data:
+        guid: 7751df13b1df96740bf528a5e83acd64
+        position: {x: 705, y: 293}
+        notes: 
+        considerationSetName: UD Agent
+        considerationName: Hunger
+        amount: -25

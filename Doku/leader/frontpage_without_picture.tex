@@ -1,0 +1,74 @@
+%
+% Project documentation template
+% ===========================================================================
+% This is part of the document "Project documentation template".
+% Authors: brd3, kaa1
+%
+
+\begin{titlepage}
+
+
+% BFH-Logo absolute placed at (28,12) on A4 and picture (16:9 or 15cm x 8.5cm)
+% Actually not a realy satisfactory solution but working.
+%---------------------------------------------------------------------------
+\setlength{\unitlength}{1mm}
+\begin{textblock}{20}[0,0](28,12)
+	\includegraphics[scale=1.0]{images/BFH_Logo_B.png}
+\end{textblock}
+
+% Institution / titel / subtitel / authors / experts:
+%---------------------------------------------------------------------------
+\begin{flushleft}
+
+\vspace*{21mm}
+
+\fontsize{26pt}{40pt}\selectfont 
+\heading				\\							% Read heading from file leader/title.tex
+\vspace{2mm}
+
+\fontsize{16pt}{24pt}\selectfont\vspace{0.3em}
+Place your subheading here 			\\				% Insert subheading
+\vspace{5mm}
+
+\fontsize{10pt}{12pt}\selectfont
+\textbf{Description of thesis (semester- / Bachelor thesis / etc.)} \\		% Insert text
+\vspace{7mm}
+
+% Abstract (eingeben):
+%---------------------------------------------------------------------------
+\begin{textblock}{150}(28,100)
+\fontsize{10pt}{12pt}\selectfont
+[Insert short text (abstract) if desired] \\ 
+This document serves as a template for the compilation of reports according to the guidelines of the BFH. The template is written in LATEX and supports the automatic writing of various directories, references, indexing and glossaries. This small text is a summary of this document with a length of 4 to max. 8 lines. \\ 
+The cover picture may be turned on or off in the lines 157/158 of the file template.tex.
+\end{textblock}
+
+\begin{textblock}{150}(28,225)
+\fontsize{10pt}{17pt}\selectfont
+\begin{tabbing}
+xxxxxxxxxxxxxxx\=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx \kill
+Degree course:	\> [z.B. Electrical and Communication Engineering]	\\		% insert name of degree course
+Authors:		\> [Test Peter, M\"uster R\"os\"a]		\\					% insert names
+Tutor:	\> [Dr.~Xxxx Xxxx, Dr.~Yyyy Yyyy]		\\							% insert names
+Constituent:	\> [Wwwww AG]					\\							% insert names
+Experts:		\> [Dr.~Zzzz Zzzz]				\\							% insert names
+Date:			\> \versiondate					\\							% read from file leader/version.tex
+\end{tabbing}
+
+\end{textblock}
+\end{flushleft}
+
+\begin{textblock}{150}(28,280)
+\noindent 
+\color{bfhgrey}\fontsize{9pt}{10pt}\selectfont
+Berner Fachhochschule | Haute \'ecole sp\'ecialis\'ee bernoise | Bern University of Applied Sciences
+\color{black}\selectfont
+\end{textblock}
+
+
+\end{titlepage}
+
+%
+% ===========================================================================
+% EOF
+%

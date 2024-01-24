@@ -1,0 +1,11 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
+    <Style src="project://database/Assets/KadaXuanwu/UtilityDesigner/Scripts/Editor/USS/UtilityDesigner.uss?fileID=7433441132597879392&amp;guid=eb51e9f0e04e166498ca7ef87fa3f0c9&amp;type=3#UtilityDesigner" />
+    <ui:VisualElement name="Container" style="height: 80px;">
+        <ui:VisualElement name="Title" class="entryHeader">
+            <ui:Label tabindex="-1" text="Consideration ?" display-tooltip-when-elided="true" name="LabelTitle" class="entryTitle" />
+            <ui:VisualElement name="Spacer" style="flex-grow: 1;" />
+            <ui:Button text="-" display-tooltip-when-elided="true" name="ButtonRemoveElement" tooltip="DELETE this Consideration." class="buttonAddRemove" />
+        </ui:VisualElement>
+        <ui:VisualElement name="Stats" />
+    </ui:VisualElement>
+</ui:UXML>

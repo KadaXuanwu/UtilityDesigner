@@ -1,0 +1,30 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="True">
+    <Style src="project://database/Assets/KadaXuanwu/UtilityDesigner/Scripts/Editor/USS/UtilityDesigner.uss?fileID=7433441132597879392&amp;guid=eb51e9f0e04e166498ca7ef87fa3f0c9&amp;type=3#UtilityDesigner" />
+    <ui:VisualElement name="Container" style="height: 160px;">
+        <ui:VisualElement name="Title" class="entryHeader">
+            <ui:Label tabindex="-1" text="Evaluator ?" display-tooltip-when-elided="true" name="LabelTitle" class="entryTitle" />
+            <ui:TextField picking-mode="Ignore" name="TextFieldRename" max-length="16" style="display: none; font-size: 20px; min-width: 100px;" />
+            <ui:VisualElement name="Spacer" style="flex-grow: 1;" />
+            <ui:Button text="N" display-tooltip-when-elided="true" name="ButtonRename" class="buttonAddRemove" />
+            <ui:Button text="-" display-tooltip-when-elided="true" name="ButtonRemoveElement" class="buttonAddRemove" />
+        </ui:VisualElement>
+        <ui:VisualElement name="Content">
+            <ui:DropdownField label="Consideration" index="-1" name="DropdownConsideration" tooltip="Consideration used to evaluate." />
+            <ui:Slider picking-mode="Ignore" label="Weight [0.0%]" value="0.5" name="SliderWeight" high-value="1" show-input-field="true" tooltip="After scoring this Evaluator, its score will be multiplied by the percentage of this weight. " style="margin-top: 5px;" />
+            <uie:CurveField label="Curve (norm)" name="CurveEvaluation" tooltip="Normalized curve used to get the score of this Evaluator (X-axis: value of the Consideration, Y-axis: score)" style="margin-top: 5px;" />
+            <ui:VisualElement name="MinMaxValuesContainer" style="flex-grow: 1; flex-direction: row;">
+                <ui:VisualElement name="Filler" style="width: 122px;" />
+                <ui:FloatField name="FloatFieldCurveMinValue" tooltip="Value of the Consideration at 0." />
+                <ui:Label tabindex="-1" text="min" display-tooltip-when-elided="true" name="LabelCurveMin" tooltip="Value of the Consideration at 0." />
+                <ui:VisualElement name="Filler" style="flex-grow: 1;" />
+                <ui:Label tabindex="-1" text="max" display-tooltip-when-elided="true" name="LabelCurveMax" tooltip="Value of the Consideration at 1." />
+                <ui:FloatField name="FloatFieldCurveMaxValue" tooltip="Value of the Consideration at 1." />
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement name="ScoreDisplay" style="flex-direction: row; height: 10px; margin-left: 3px; margin-right: 3px; margin-top: 3px; margin-bottom: 3px;">
+            <ui:VisualElement name="ContainerScore" style="width: 100%;">
+                <ui:VisualElement name="Score" style="flex-grow: 1; background-color: rgb(0, 124, 255); width: 0;" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

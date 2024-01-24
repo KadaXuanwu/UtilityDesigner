@@ -1,0 +1,17 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="True">
+    <Style src="project://database/Assets/KadaXuanwu/UtilityDesigner/Scripts/Editor/USS/UtilityDesigner.uss?fileID=7433441132597879392&amp;guid=eb51e9f0e04e166498ca7ef87fa3f0c9&amp;type=3#UtilityDesigner" />
+    <ui:VisualElement name="Container" style="height: 130px;">
+        <ui:VisualElement name="Title" class="entryHeader">
+            <ui:Label tabindex="-1" text="Precondition ?" display-tooltip-when-elided="true" name="LabelTitle" class="entryTitle" />
+            <ui:TextField picking-mode="Ignore" name="TextFieldRename" max-length="16" style="display: none; font-size: 20px; min-width: 100px;" />
+            <ui:VisualElement name="Spacer" style="flex-grow: 1;" />
+            <ui:Button text="N" display-tooltip-when-elided="true" name="ButtonRename" tooltip="Rename this Precondition." class="buttonAddRemove" />
+            <ui:Button text="-" display-tooltip-when-elided="true" name="ButtonRemoveElement" tooltip="DELETE this Precondition." class="buttonAddRemove" />
+        </ui:VisualElement>
+        <ui:VisualElement name="Content">
+            <ui:DropdownField label="Consideration" name="DropdownConsideration" tooltip="Consideration used to compare." />
+            <ui:EnumField label="Comparator" type="KadaXuanwu.UtilityDesigner.Scripts.Comparator, UtilityDesigner" name="EnumFieldComparator" tooltip="Comparison operator." style="margin-top: 5px;" />
+            <ui:FloatField label="Value" name="FloatFieldValue" tooltip="Value the Consideration needs to meet to fulfil the Precondition." style="margin-top: 5px;" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

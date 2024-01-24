@@ -1,0 +1,63 @@
+.subtitle {
+    font-size: 20px;
+    margin-left: 5px;
+    margin-right: 5px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    -unity-font-style: bold;
+}
+
+.entryTitle {
+    font-size: 20px;
+    margin-left: 5px;
+    margin-top: 5px;
+}
+
+.header {
+    flex-direction: row;
+    height: 40px;
+    flex-shrink: 0;
+    -unity-text-align: middle-center;
+}
+
+.buttonAddRemove {
+    width: 20px;
+    height: 20px;
+    flex-direction: column;
+    -unity-text-align: upper-center;
+}
+
+.toolbarButton {
+    -unity-text-align: middle-center;
+}
+
+.entryHeader {
+    flex-direction: row;
+    margin-bottom: 8px;
+    height: 30px;
+}
+
+.considerationValueContainer {
+    flex-grow: 1;
+    background-color: rgba(0, 0, 0, 0);
+    flex-direction: row;
+    margin-top: 2px;
+    margin-bottom: 2px;
+}
+
+.considerationValueLabel {
+    width: 120px;
+    margin-left: 3px;
+}
+
+.inspectorSubtitle {
+    margin-left: 3px;
+    margin-top: 20px;
+    margin-bottom: 3px;
+    font-size: 14px;
+    -unity-font-style: bold-and-italic;
+}
+
+.executionToollistButton {
+    width: 90px;
+}

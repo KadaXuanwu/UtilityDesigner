@@ -1,0 +1,36 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
+    <Style src="project://database/Assets/KadaXuanwu/UtilityDesigner/Scripts/Editor/USS/UtilityDesigner.uss?fileID=7433441132597879392&amp;guid=eb51e9f0e04e166498ca7ef87fa3f0c9&amp;type=3#UtilityDesigner" />
+    <ui:VisualElement name="Container" style="flex-grow: 1; flex-direction: row;">
+        <ui:VisualElement name="ConsiderationsContainer" style="width: 250px;">
+            <ui:Toggle label="Local" name="ToggleLocal" style="margin-top: 6px; margin-bottom: 6px;" />
+            <ui:VisualElement name="Line" style="background-color: rgb(202, 202, 202); margin-left: 2px; margin-right: 2px; height: 1px;" />
+            <ui:VisualElement name="ConsiderationsHeader" class="header">
+                <ui:Label tabindex="-1" text="Considerations" display-tooltip-when-elided="true" name="ConsiderationsTitle" class="subtitle" />
+                <ui:VisualElement name="Filler" style="flex-grow: 1;" />
+                <ui:Button text="+" display-tooltip-when-elided="true" name="ButtonAddConsideration" tooltip="Add a new Consideration." class="buttonAddRemove" />
+            </ui:VisualElement>
+            <ui:VisualElement name="ConsiderationsContent" style="flex-grow: 1;" />
+        </ui:VisualElement>
+        <ui:Label tabindex="-1" display-tooltip-when-elided="true" name="LabelBugfix" style="min-height: 100%; max-width: 0;" />
+        <ui:VisualElement name="Line" style="width: 1px; background-color: rgb(202, 202, 202); margin-right: 2px;" />
+        <ui:VisualElement name="InspectorContainer" style="flex-grow: 1;">
+            <ui:VisualElement name="ConsiderationsHeader" class="header">
+                <ui:Label tabindex="-1" text="Inspector" display-tooltip-when-elided="true" name="InspectorTitle" class="subtitle" />
+            </ui:VisualElement>
+            <ui:VisualElement name="InspectorContent" style="flex-grow: 1; visibility: hidden;">
+                <ui:Label tabindex="-1" text="General" display-tooltip-when-elided="true" name="LabelInspectorSubtitleGeneral" class="inspectorSubtitle" style="margin-top: 4px;" />
+                <ui:TextField picking-mode="Ignore" label="Name" name="TextFieldDesignation" max-length="16" tooltip="Name of this Consideration." />
+                <ui:EnumField label="Type" type="KadaXuanwu.UtilityDesigner.Scripts.Evaluation.Consideration+Type, UtilityDesigner, UtilityDesigner" name="EnumFieldType" tooltip="Data type used for this Consideration." />
+                <ui:Label tabindex="-1" text="Values" display-tooltip-when-elided="true" name="LabelInspectorSubtitleValues" class="inspectorSubtitle" />
+                <ui:FloatField label="Initial Value" name="FloatFieldInitialValue" tooltip="The value will be set to this at the beginning." />
+                <ui:Toggle label="Set Min Value" name="ToggleSetMinValue" tooltip="Should a minimum value be set?" />
+                <ui:FloatField label="Min Value" name="FloatFieldMinValue" tooltip="The value can&apos;t drop below this." style="display: none;" />
+                <ui:Toggle label="Set Max Value" name="ToggleSetMaxValue" tooltip="Should a maximum value be set?" />
+                <ui:FloatField label="Max Value" name="FloatFieldMaxValue" tooltip="The value can&apos;t rise above this." style="display: none;" />
+                <ui:Label tabindex="-1" text="Features" display-tooltip-when-elided="true" name="LabelInspectorSubtitleFeatures" class="inspectorSubtitle" />
+                <ui:FloatField label="Change Per Sec" name="FloatFieldChangePerSecond" tooltip="Change of the value over time. Updated according to Evaluation&apos;s tick rate." />
+                <ui:Toggle label="Use Real Time" name="ToggleUseRealTime" tooltip="Use real time instead of scaled time?" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

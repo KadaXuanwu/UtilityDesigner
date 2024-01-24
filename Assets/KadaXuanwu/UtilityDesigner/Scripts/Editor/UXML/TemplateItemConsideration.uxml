@@ -1,0 +1,24 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="True">
+    <Style src="project://database/Assets/KadaXuanwu/UtilityDesigner/Scripts/Editor/USS/UtilityDesigner.uss?fileID=7433441132597879392&amp;guid=eb51e9f0e04e166498ca7ef87fa3f0c9&amp;type=3#UtilityDesigner" />
+    <ui:VisualElement name="Container">
+        <ui:VisualElement name="DesignationContainer" class="considerationValueContainer">
+            <ui:Label tabindex="-1" text="Name" display-tooltip-when-elided="true" name="LabelDesignationValue" style="flex-grow: 1; font-size: 16px; margin-left: 3px; -unity-font-style: bold;" />
+        </ui:VisualElement>
+        <ui:VisualElement name="TypeContainer" class="considerationValueContainer">
+            <ui:Label tabindex="-1" text="Type" display-tooltip-when-elided="true" name="LabelType" class="considerationValueLabel" />
+            <ui:Label tabindex="-1" text="0" display-tooltip-when-elided="true" name="LabelTypeValue" style="flex-grow: 1;" />
+        </ui:VisualElement>
+        <ui:VisualElement name="InitialValueContainer" class="considerationValueContainer">
+            <ui:Label tabindex="-1" text="Initial Value" display-tooltip-when-elided="true" name="LabelInitialValue" class="considerationValueLabel" />
+            <ui:Label tabindex="-1" text="0" display-tooltip-when-elided="true" name="LabelInitialValueValue" style="flex-grow: 1;" />
+        </ui:VisualElement>
+        <ui:VisualElement name="ChangePerSecondContainer" class="considerationValueContainer">
+            <ui:Label tabindex="-1" text="Change Per Sec" display-tooltip-when-elided="true" name="LabelChangePerSecond" class="considerationValueLabel" />
+            <ui:Label tabindex="-1" text="0" display-tooltip-when-elided="true" name="LabelChangePerSecondValue" style="flex-grow: 1;" />
+        </ui:VisualElement>
+        <ui:VisualElement name="RuntimeValueContainer" class="considerationValueContainer">
+            <ui:Label tabindex="-1" text="Value" display-tooltip-when-elided="true" name="LabelRuntimeValue" class="considerationValueLabel" style="-unity-font-style: bold-and-italic; visibility: hidden;" />
+            <ui:Label tabindex="-1" text="0" display-tooltip-when-elided="true" name="LabelRuntimeValueValue" style="flex-grow: 1; -unity-font-style: bold-and-italic; visibility: hidden;" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

@@ -1,0 +1,90 @@
+%
+% Project documentation template
+% ===========================================================================
+% This is part of the document "Project documentation template".
+% Authors: brd3, kaa1
+%
+
+\begin{titlepage}
+
+
+% BFH-Logo absolute placed at (28,12) on A4 and picture (16:9 or 15cm x 8.5cm)
+% Actually not a realy satisfactory solution but working.
+%---------------------------------------------------------------------------
+\setlength{\unitlength}{1mm}
+\begin{textblock}{20}[0,0](33,12)
+	\includegraphics[scale=1.0]{images/BFH_Logo_B.png}
+\end{textblock}
+
+%\begin{textblock}{154}(28,48)
+%	\begin{picture}(150,2)
+%		\put(0,0){\color{bfhgrey}\rule{150mm}{2mm}}
+%	\end{picture}
+%\end{textblock}
+
+\begin{textblock}{154}[0,0](33,50)
+	\includegraphics[scale=0.39]{images/title_image.png}			% define cover picture
+\end{textblock}
+
+%\begin{textblock}{154}(28,135)
+%	\begin{picture}(150,2)
+%		\put(0,0){\color{bfhgrey}\rule{150mm}{2mm}}
+%	\end{picture}
+%\end{textblock}
+\color{black}
+
+% Institution / titel / subtitel / authors / experts:
+%---------------------------------------------------------------------------
+\begin{flushleft}
+
+\vspace*{115mm}
+
+\fontsize{26pt}{28pt}\selectfont 
+\heading				\\							% Read heading from file leader/title.tex
+\vspace{2mm}
+
+\fontsize{16pt}{20pt}\selectfont\vspace{0.3em}
+Utility Designer - Combining Utility AI and Behaviour Trees 			\\	% Insert subheading
+\vspace{5mm}
+
+\fontsize{10pt}{12pt}\selectfont
+\textbf{Bachelor Thesis} \\		% Insert text
+\vspace{3mm}
+
+% Abstract (eingeben):
+%---------------------------------------------------------------------------
+\begin{textblock}{150}(33,190)
+\fontsize{10pt}{12pt}\selectfont
+The development of a flexible and intuitive tool for the Unity Asset Store called Utility Designer, which helps to create realistically behaving non-player characters.
+
+\end{textblock}
+
+\begin{textblock}{150}(33,225)
+\fontsize{10pt}{17pt}\selectfont
+\begin{tabbing}
+xxxxxxxxxxxxxxx\=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx \kill
+Degree course:	\> Computer Science	\\		% insert name of degree course
+Author:		\> K\"aser David		\\					% insert names
+Tutor:	\> Dr.~Hudritsch Marcus		\\							% insert names
+Constituent:	\> BFH					\\							% insert names
+Expert:		\> Studer Harald				\\							% insert names
+Date:			\> \versiondate					\\							% read from file leader/version.tex
+\end{tabbing}
+
+\end{textblock}
+\end{flushleft}
+
+\begin{textblock}{150}(33,280)
+\noindent 
+\color{bfhgrey}\fontsize{9pt}{10pt}\selectfont
+Berner Fachhochschule | Haute \'ecole sp\'ecialis\'ee bernoise | Bern University of Applied Sciences
+\color{black}\selectfont
+\end{textblock}
+
+
+\end{titlepage}
+
+%
+% ===========================================================================
+% EOF
+%

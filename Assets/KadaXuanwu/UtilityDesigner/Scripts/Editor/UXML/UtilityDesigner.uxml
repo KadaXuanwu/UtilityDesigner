@@ -1,0 +1,114 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
+    <Style src="project://database/Assets/KadaXuanwu/UtilityDesigner/Scripts/Editor/USS/UtilityDesigner.uss?fileID=7433441132597879392&amp;guid=eb51e9f0e04e166498ca7ef87fa3f0c9&amp;type=3#UtilityDesigner" />
+    <ui:VisualElement name="Container" style="flex-grow: 1; flex-direction: row;">
+        <ui:VisualElement name="StateSetsTab" style="width: 250px;">
+            <uie:Toolbar name="Toolbar">
+                <uie:ToolbarMenu tabindex="-1" display-tooltip-when-elided="true" name="MenuStateSets" text="-" tooltip="All State Sets." style="-unity-text-align: middle-left; flex-grow: 1;" />
+                <uie:ToolbarButton text="Rename" display-tooltip-when-elided="true" name="ButtonRenameStateSet" tooltip="Rename the selected State Set." class="toolbarButton" />
+                <uie:ToolbarButton text="+" name="ButtonAddStateSet" display-tooltip-when-elided="true" tooltip="Add a new State Set." class="toolbarButton" style="width: 20px;" />
+                <uie:ToolbarButton text="-" name="ButtonRemoveStateSet" display-tooltip-when-elided="true" tooltip="DELETE the selected State Set." class="toolbarButton" style="width: 20px;" />
+            </uie:Toolbar>
+            <ui:VisualElement name="StatesContainer" style="flex-grow: 1;">
+                <ui:VisualElement name="Header" class="header">
+                    <ui:Label tabindex="-1" text="States" display-tooltip-when-elided="true" name="LabelTitle" class="subtitle" />
+                    <ui:VisualElement name="Fill" style="flex-grow: 1;" />
+                    <ui:Button text="+" display-tooltip-when-elided="true" name="ButtonAddState" tooltip="Add a new State." class="buttonAddRemove" />
+                </ui:VisualElement>
+                <ui:VisualElement name="StatesContent" style="flex-grow: 1;" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:Label tabindex="-1" display-tooltip-when-elided="true" name="LabelBugfix" style="min-height: 100%; max-width: 3px;" />
+        <ui:VisualElement name="Line" style="width: 3px; background-color: rgb(202, 202, 202); margin-right: 2px;" />
+        <ui:VisualElement name="AdaptiveTab" style="flex-grow: 1;">
+            <uie:Toolbar name="Toolbar">
+                <uie:ToolbarButton text="Evaluation" display-tooltip-when-elided="true" name="ButtonEvaluation" tooltip="Display the Evaluation tab." class="toolbarButton" style="width: 100px;" />
+                <uie:ToolbarButton text="Execution" display-tooltip-when-elided="true" name="ButtonExecution" tooltip="Display the Execution tab." class="toolbarButton" style="width: 100px;" />
+                <uie:ToolbarSpacer name="Spacer" style="width: auto; flex-grow: 1;" />
+                <ui:TextField picking-mode="Ignore" focusable="true" name="TextFieldFileName" tooltip="Name of the current Utility Behaviour." style="min-width: 100px;" />
+                <uie:ToolbarButton text="Save" display-tooltip-when-elided="true" name="ButtonSave" tooltip="Save the Utility Behaviour. Saves automatically on close once a Utility Behaviour is linked." class="toolbarButton" style="width: 50px;" />
+                <uie:ToolbarButton text="Load" display-tooltip-when-elided="true" name="ButtonLoad" tooltip="Load a Utility Behaviour. OVERRIDES everything if not saved." class="toolbarButton" style="width: 50px;" />
+            </uie:Toolbar>
+            <ui:VisualElement name="EvaluationSection" style="flex-grow: 1; flex-direction: row; display: flex;">
+                <ui:VisualElement name="SpecificsContainer" style="flex-grow: 1; flex-direction: row; visibility: visible;">
+                    <ui:VisualElement name="EvaluationInspectorContainer" style="width: 33.33%;">
+                        <ui:VisualElement name="Header" class="header">
+                            <ui:Label tabindex="-1" text="Inspector" display-tooltip-when-elided="true" name="LabelTitle" class="subtitle" />
+                        </ui:VisualElement>
+                        <ui:VisualElement name="EvaluationInspectorContent" style="flex-grow: 1;">
+                            <ui:Label tabindex="-1" text="General" display-tooltip-when-elided="true" name="LabelEvaluationInspectorSubtitleGeneral" class="inspectorSubtitle" style="margin-top: 4px;" />
+                            <ui:Toggle label="Active" name="ToggleStateActive" tooltip="Should this state even be considered?" />
+                            <ui:TextField picking-mode="Ignore" label="Name" name="TextFieldStateName" tooltip="Name of this State" />
+                            <ui:Label tabindex="-1" text="Weights" display-tooltip-when-elided="true" name="LabelEvaluationInspectorSubtitleWeights" class="inspectorSubtitle" />
+                            <ui:FloatField label="Weight" name="FloatFieldStateWeight" picking-mode="Ignore" tooltip="A factor applied to the total score." />
+                            <ui:FloatField label="Execution Factor" name="FloatFieldStateExecutionFactor" tooltip="A factor applied to the total score if this this state is currently being executed." />
+                            <ui:Label tabindex="-1" text="Score" display-tooltip-when-elided="true" name="LabelEvaluationInspectorSubtitleScore" class="inspectorSubtitle" />
+                            <ui:FloatField label="Base Score" name="FloatFieldStateBaseScore" tooltip="A fixed amount of score added. (Before Weights)" style="height: 18px;" />
+                            <ui:Toggle label="Set Min Score" name="ToggleStateSetMinScore" tooltip="Should a minimum score be set?" />
+                            <ui:FloatField label="Min Score" name="FloatFieldStateMinScore" tooltip="The final score can&apos;t drop below this. (After Weights)" style="display: none;" />
+                            <ui:Toggle label="Set Max Score" name="ToggleStateSetMaxScore" tooltip="Should a maximum score be set?" />
+                            <ui:FloatField label="Max Score" name="FloatFieldStateMaxScore" tooltip="The final score can&apos;t rise above this. (After Weights)" style="display: none;" />
+                            <ui:Label tabindex="-1" text="Features" display-tooltip-when-elided="true" name="LabelEvaluationInspectorSubtitleFeatures" class="inspectorSubtitle" />
+                            <ui:Slider picking-mode="Ignore" label="Fail Chance" show-input-field="true" name="SliderStateFailChance" high-value="1" tooltip="Chance to chose the next best state instead, if this state gets chosen." />
+                            <ui:Label tabindex="-1" text="Notes" display-tooltip-when-elided="true" name="LabelEvaluationInspectorSubtitleNotes" class="inspectorSubtitle" />
+                            <ui:TextField name="TextFieldStateNotes" picking-mode="Ignore" multiline="true" tooltip="Persistent notes to help keep the overview." style="white-space: normal; max-width: 35%; min-height: 50px; max-height: 140px;" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                    <ui:VisualElement name="Line" style="width: 1px; background-color: rgb(202, 202, 202); margin-left: 2px; margin-right: 2px;" />
+                    <ui:VisualElement name="PreconditionsContainer" style="width: 33.33%;">
+                        <ui:VisualElement name="Header" class="header">
+                            <ui:Label tabindex="-1" text="Preconditions" display-tooltip-when-elided="true" name="LabelTitle" class="subtitle" />
+                            <ui:VisualElement name="Fill" style="flex-grow: 1;" />
+                            <ui:Button text="+" display-tooltip-when-elided="true" name="ButtonAddPrecondition" tooltip="Add a new Precondition." class="buttonAddRemove" />
+                        </ui:VisualElement>
+                        <ui:VisualElement name="PreconditionsContent" style="flex-grow: 1;" />
+                    </ui:VisualElement>
+                    <ui:VisualElement name="Line" style="width: 1px; background-color: rgb(202, 202, 202); margin-left: 2px; margin-right: 2px;" />
+                    <ui:VisualElement name="EvaluatorsContainer" style="width: 33.33%;">
+                        <ui:VisualElement name="Header" class="header">
+                            <ui:Label tabindex="-1" text="Evaluators" display-tooltip-when-elided="true" name="LabelTitle" class="subtitle" />
+                            <ui:VisualElement name="Fill" style="flex-grow: 1;" />
+                            <ui:Button text="+" display-tooltip-when-elided="true" name="ButtonAddEvaluator" tooltip="Add a new Evaluator." class="buttonAddRemove" />
+                        </ui:VisualElement>
+                        <ui:VisualElement name="EvaluatorsContent" style="flex-grow: 1;" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+                <ui:VisualElement name="Line" style="width: 1px; background-color: rgb(202, 202, 202); margin-left: 2px; margin-right: 2px;" />
+                <ui:VisualElement name="ConsiderationsContainer" style="width: 215px; flex-shrink: 0;">
+                    <ui:VisualElement name="ConsiderationSetsContainer" style="height: 40%; margin-bottom: -2px;">
+                        <ui:VisualElement name="Header" class="header">
+                            <ui:Label tabindex="-1" text="Considerations" display-tooltip-when-elided="true" name="LabelTitle" class="subtitle" />
+                            <ui:VisualElement name="Fill" style="flex-grow: 1;" />
+                            <ui:Button text="+" display-tooltip-when-elided="true" name="ButtonAddConsiderationSet" tooltip="Add a Consideration from the Project folder. Create a new one in the Project with [right click -&gt; Create -&gt; Utility Designer -&gt; New Consideration Set]" class="buttonAddRemove" />
+                        </ui:VisualElement>
+                        <ui:VisualElement name="ConsiderationSetsContent" style="flex-grow: 1;" />
+                    </ui:VisualElement>
+                    <ui:VisualElement name="Line" style="background-color: rgb(202, 202, 202); margin-left: 2px; margin-right: 2px; height: 1px;" />
+                    <ui:VisualElement name="ConsiderationsContainer" style="background-color: rgba(0, 0, 0, 0); flex-grow: 1; margin-top: 2px;">
+                        <ui:VisualElement name="ConsiderationsContent" style="flex-grow: 1;" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:VisualElement name="ExecutionSection" style="flex-grow: 1; display: none; flex-direction: row;">
+                <ui:VisualElement name="GraphExecution" style="flex-grow: 1;">
+                    <ui:VisualElement name="MenuExecution" style="flex-direction: row; margin-left: 3px; margin-top: 3px; margin-bottom: 3px; margin-right: 3px;">
+                        <ui:Button text="Add Node" display-tooltip-when-elided="true" name="ButtonAddNode" tooltip="Add a new node." class="executionToollistButton" />
+                        <ui:VisualElement name="Filler" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0);" />
+                        <ui:Button text="Copy BT" display-tooltip-when-elided="true" name="ButtonCopyBT" tooltip="Copy the whole behaviour tree." class="executionToollistButton" />
+                        <ui:Button text="Paste BT" display-tooltip-when-elided="true" name="ButtonPasteBT" tooltip="REPLACE the whole behaviour tree with the copied one." class="executionToollistButton" />
+                    </ui:VisualElement>
+                    <ui:VisualElement name="GraphViewContainer" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0);">
+                        <KadaXuanwu.UtilityDesigner.Scripts.Execution.Editor.BehaviourTreeView focusable="true" name="BehaviourTreeView" style="flex-grow: 1;" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+                <ui:VisualElement name="Line" style="width: 1px; background-color: rgb(202, 202, 202); margin-left: 2px; margin-right: 2px;" />
+                <ui:VisualElement name="ExecutionInspectorContainer" style="background-color: rgba(0, 0, 0, 0); width: 24%;">
+                    <ui:VisualElement name="Header" class="header">
+                        <ui:Label tabindex="-1" text="Inspector" display-tooltip-when-elided="true" name="LabelTitle" class="subtitle" />
+                    </ui:VisualElement>
+                    <ui:VisualElement name="ExecutionInspectorContent" style="flex-grow: 0;" />
+                    <ui:Label tabindex="-1" display-tooltip-when-elided="true" name="LabelNodeDescription" style="margin-left: 15px; margin-top: 20px; margin-right: 15px; white-space: normal; -unity-font-style: italic;" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

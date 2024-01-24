@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bfb3e488424dc244bb62fe61f4f296b8, type: 3}
+  m_Name: UD Environment
+  m_EditorClassIdentifier: 
+  considerations:
+  - designation: Deer nearby
+    type: 0
+    initialValue: 1
+    setMinValue: 0
+    minValue: 0
+    setMaxValue: 0
+    maxValue: 0
+    changePerSecond: 0
+    useRealTime: 0
+  - designation: Bears nearby
+    type: 0
+    initialValue: 0
+    setMinValue: 0
+    minValue: 0
+    setMaxValue: 0
+    maxValue: 0
+    changePerSecond: 0
+    useRealTime: 0
+  local: 0

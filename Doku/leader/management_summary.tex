@@ -1,0 +1,10 @@
+\chapter*{Management Summary}
+\label{chap:managementSummary}
+
+Creating Non-Player Characters (NPCs) in computer games or simulations has always been a challenging task, and coding complex behaviours can be very time-consuming. To address this challenge, solutions such as state machines and behaviour trees have been developed as powerful tools to streamline the creation of AI behaviours. But these tools start to struggle when it comes to creating more realistic NPCs that need to be able to make intelligent decisions in different circumstances. However, a lesser known solution called utility AI is perfect for creating lifelike NPCs.
+
+The aim of this thesis is therefore to provide Unity developers with a powerful and generic tool for creating AI behaviours using utility AI, making the creation of realistic behaviours more accessible. The tool is called Utility Designer and will be released on the Unity Asset Store. It combines the principles of utility AI with widely used behaviour trees.
+
+This is achieved by using Unity's UI toolkit to create an intuitive graphical interface that allows the user to easily configure the behaviour. The Utility Designer tool has two main tabs. The evaluation tab uses utility AI to decide which state is best for the NPC in the current situation. Each state is evaluated based on various factors, such as the environment or the character's needs. In the execution tab, each state is assigned a behaviour tree, which is used to define the behaviour of each state. The state with the highest score will have its behaviour tree executed. This will cause the NPC to interact with the environment.
+
+Using this tool to create various sample scenes has demonstrated its ease of use and its ability to create NPCs that can intelligently decide what to do. Its embedded behaviour tree system allows it to be used as a traditional behaviour tree, bypassing the utility AI part if desired, thus increasing its versatility. The thesis also shows the difficulties a tool developer faces in the process of creating generic, yet intuitive and powerful tools.

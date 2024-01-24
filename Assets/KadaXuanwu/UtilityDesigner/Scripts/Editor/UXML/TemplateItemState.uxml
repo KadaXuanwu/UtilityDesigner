@@ -1,0 +1,19 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="True">
+    <Style src="project://database/Assets/KadaXuanwu/UtilityDesigner/Scripts/Editor/USS/UtilityDesigner.uss?fileID=7433441132597879392&amp;guid=eb51e9f0e04e166498ca7ef87fa3f0c9&amp;type=3#UtilityDesigner" />
+    <ui:VisualElement name="Container" style="height: 80px;">
+        <ui:VisualElement name="Title" class="entryHeader">
+            <ui:Label tabindex="-1" text="State ?" display-tooltip-when-elided="true" name="LabelTitle" class="entryTitle" />
+            <ui:VisualElement name="Spacer" style="flex-grow: 1;" />
+            <ui:Button text="-" display-tooltip-when-elided="true" name="ButtonRemoveElement" tooltip="DELETE this State." class="buttonAddRemove" />
+        </ui:VisualElement>
+        <ui:VisualElement name="Stats">
+            <ui:VisualElement name="ContainerScoreText" style="flex-grow: 1; flex-direction: row;">
+                <ui:Label tabindex="-1" text="Total score" display-tooltip-when-elided="true" name="LabelScoreTotal" style="width: 120px; visibility: hidden;" />
+                <ui:Label tabindex="-1" display-tooltip-when-elided="true" name="LabelScoreTotalValue" style="visibility: hidden;" />
+            </ui:VisualElement>
+            <ui:VisualElement name="ContainerScoreDisplay" style="width: 100%; height: 10px; margin-top: 5px; visibility: hidden;">
+                <ui:VisualElement name="ScoreDisplay" style="flex-grow: 1; background-color: rgb(0, 124, 255); width: 0;" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

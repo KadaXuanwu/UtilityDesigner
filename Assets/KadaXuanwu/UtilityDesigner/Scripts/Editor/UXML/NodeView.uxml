@@ -1,0 +1,21 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="True">
+    <Style src="project://database/Assets/KadaXuanwu/UtilityDesigner/Scripts/Editor/USS/NodeView.uss?fileID=7433441132597879392&amp;guid=92700dd2650cf894489ebe3135053f76&amp;type=3#NodeView" />
+    <ui:VisualElement name="node-state" style="flex-grow: 1;" />
+    <ui:VisualElement name="node-border" picking-mode="Ignore">
+        <ui:VisualElement name="contents">
+            <ui:VisualElement name="top">
+                <ui:VisualElement name="input" />
+                <ui:VisualElement name="divider" class="vertical" />
+                <ui:VisualElement name="title" style="-unity-text-align: middle-center; font-size: 15px; margin-top: 4px; margin-bottom: 4px; margin-left: 3px; margin-right: 3px;">
+                    <ui:Label name="title-label" text="Empty Node" class="unity-text-element unity-label" style="white-space: normal;" />
+                </ui:VisualElement>
+                <ui:VisualElement name="details" style="-unity-text-align: middle-center; font-size: 12px; margin-bottom: 4px; -unity-font-style: italic; margin-right: 3px; margin-left: 3px;">
+                    <ui:Label name="details-label" class="unity-text-element unity-label" style="white-space: normal;" />
+                </ui:VisualElement>
+                <ui:VisualElement name="divider" class="horizontal" />
+                <ui:VisualElement name="output" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+    <ui:VisualElement name="selection-border" picking-mode="Ignore" />
+</ui:UXML>

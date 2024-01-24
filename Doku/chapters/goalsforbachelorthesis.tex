@@ -1,0 +1,40 @@
+%\input{utilityai.tex}
+
+\chapter{Goals for bachelor thesis}
+\label{chap:goalsforbachelorthesis}
+
+\section{Graphical implementation}
+\label{sec:goalsforbachelorthesis_graphicalimplementation}
+
+The main goal of the thesis is to make utility AI as intuitive and easy to use as possible. To achieve this, a graphical implementation of this framework might be the right choice. Each element would be represented by a node, similar to the behaviour tree in figure \ref{fig:behaviour_tree_tour_guide}. A final example of a graphical representation might look like the sketch in figure \ref{fig:utility_ai_sketch_defending_ai}. Making the whole structure node-based would give the user a much better overview because everything would be visible at once, which is currently not the case with the ScriptableObjects.
+
+\section{Publish as an asset}
+\label{sec:goalsforbachelorthesis_publishasanasset}
+
+To make this tool accessible to everyone, not only does it need to be intuitive and easy to understand, but it also needs to be easy to find and incorporate into their current project. The Unity Asset Store seems like the perfect place to do this. Once uploaded, any Unity developer will be able to find and use it.
+
+Of course, making this tool an asset takes time, as it cannot have bugs or other problems when it is published. A manual and some sample scenes to show the user how to use the utility AI would also be necessary. This will add an extra challenge to the thesis, but will also provide motivation to make it work flawlessly, which is always a good thing when developing a new tool.
+
+\section{Improvements}
+\label{sec:goalsforbachelorthesis_improvements}
+
+The more utility AI was tested and played with, the more it became clear that this framework alone is not enough to make an AI work properly. The two example scenes in the section 4.6 both contain a state machine. That's because utility AI is able to decide the next best action, but it's not able to define the exact steps of how to execute that action.
+
+Imagine an agent on a spaceship from section 4.6.2 needs to extinguish a fire. Utility AI would tell the agent to do this action, but this action is actually made up of four different actions:
+
+\begin{tabular}{lp{12cm}}
+1: & "walk to fire extinguisher" \cr
+2: & "pick up fire extinguisher" \cr
+3: & "walk to structure on fire" \cr
+4: & "extinguish fire"
+\end{tabular}
+
+All of these actions must be performed in a specific order, and most of them must wait for a condition to occur before the next action can be executed. For example, the second action needs to wait for the agent to arrive before it can pick up the fire extinguisher. Simply calling an action script, which is what the utility AI does, is not enough.
+
+The resulting idea is to use utility AI for the high-level decision making, while combining it with another tool that helps to execute the actions one at a time. These actions may not always be in a sequence, as in the example of extinguishing a fire. A decision might also be something like entering a house, where the agent might need a behaviour like the one in figure 3.1 to walk through a door.
+
+\newpage
+
+There are different ways of defining the exact execution of actions: state machines work very well, as the complexity of declaring the behaviour of a single action is usually not very complex. Another way is to use a behaviour tree to allow more complex behaviour, such as walking through a door. And interestingly, GOAP could also work because it's input is a goal and it generates a sequence of actions. So utility AI could decide the next goal for the agent, while GOAP plans how to execute it.
+
+Because there are so many possibilities, more research and testing will presumably be needed in the thesis. Nevertheless, in order to keep it generic, it might be a good idea to give the user the option to use a tool of their choice for this purpose. An implementation of a behaviour tree, for example, could also be packaged in this tool, so that the user could get started immediately after obtaining this asset.

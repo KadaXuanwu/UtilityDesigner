@@ -1,0 +1,85 @@
+\chapter{Stories}
+\label{chap:appendix_stories}
+
+At the beginning of Projects 2, some stories were written to figure out the flexibility needed in a tool that would provide an interface for creating generic behaviour.
+
+\section{Tour Guide For Aventicum VR}
+
+\begin{itemize}
+    \item Tourguide waits for the visitors to arrive.
+    \item While waiting, he waves at the visitors.
+    \item When the visitors are close enough, he starts his welcome speech.
+    \item After finishing his speech, he starts walking towards Location 1.
+    \item After everyone has reached Location 1, he starts to talk again.
+    \item While talking, he points at the building and steps a bit to the side (away from the tourists).
+    \item After finishing his speech, he starts walking towards Location 2.
+    \item This time, he also says something while walking and while everyone is close enough.
+    \item After everyone has reached Location 2, he starts to talk again.
+    \item After finishing his speech, the tour ends.
+    \item At any time the tourguide is talking or walking and the visitors are too far away, he will pause and wave at them.
+\end{itemize}
+
+\section{Zombie Apocalypse}
+
+\begin{itemize}
+    \item 10 Zombies are trying to bite the player.
+    \item They walk towards the player at a given speed.
+    \item 5 of them will stay grouped and are a bit faster than the other 5.
+    \item Zombies always keep a small gap between each other.
+    \item Zombies become faster the less health they have.
+    \item A friendly NPC (Bot) helps the player to kill the zombies, using a gun.
+    \item The NPC tries to keep as much distance as possible to the zombies, while still staying in range to shoot at them (gun has a max range of 40 meters).
+    \item The NPC needs to maintain line of sight to the zombies, and will reposition if it breaks.
+    \item The NPC forgets the position of the zombies when he doesn't see them for more than 5 seconds, and will enter a patrolling state.
+\end{itemize}
+
+\section{Escort Quest}
+
+In a role-playing game, there are various NPCs who must follow the player for certain quests. While following, the NPCs may be able to help fight monsters attacking the player, or they may be scared and stay back. Also, the NPC may prefer to walk on the road rather than the grass.
+
+\begin{itemize}
+    \item \textbf{Father:}
+    \begin{itemize}
+        \item Engages in aggressive combat against the monsters to protect the family.
+        \item Unafraid of sacrificing himself for his family.
+        \item Prefers walking on the road.
+    \end{itemize}
+
+    \item \textbf{Mother:}
+    \begin{itemize}
+        \item Helps fight the monsters, but primarily to defend the child.
+        \item Will attempt to retreat when facing a strong monster, provided the child is safe.
+        \item Prefers walking on the road, but always remains close to the child.
+    \end{itemize}
+
+    \item \textbf{Child:}
+    \begin{itemize}
+        \item Fearful of monsters and will only fight if there is no avenue for escape.
+        \item Seeks safety by staying close to her mother.
+        \item Prefers to play and run in the grass, avoiding the road.
+    \end{itemize}
+\end{itemize}
+
+This example illustrates the complexity and nuance of character behaviour that game developers often need to create in order to immerse the player in a rich, believable world.
+
+\section{Defending NPC}
+
+Enemy Bot trying to defend his area by shooting at us. Usually he walks around in his paroling area. When he detects the player, he will switch to combat state and try to defeat us until we are dead or too far away from him.
+
+The player can be detected through multiple ways: [FOV, sound, hints like dead bodies]
+FOV and sound both depend on distance.
+The more hints he has, the more likely he is to enter searching / combat state.
+
+While in combat state, he ...
+\begin{itemize}
+    \item ... has different actions: [heal, attack, cover, re-position, reload, flee]
+    \item ... has different attacks: [sniper, shotgun, knife]
+\end{itemize}
+
+Every action has a different curve for each variable and a weight for it. Examples for that could be:
+
+\begin{itemize}
+    \item Heal: factor 10
+    \item Enemy Health: factor 2
+    \item Current ammo: factor 3
+\end{itemize}

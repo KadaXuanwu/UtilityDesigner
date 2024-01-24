@@ -1,0 +1,254 @@
+%
+% Main document
+% ===========================================================================
+% This is part of the document "Project documentation template".
+% Authors: brd3, kaa1
+%
+
+%---------------------------------------------------------------------------
+\documentclass[
+	a4paper,					% paper format
+	11pt,							% fontsize
+	twoside,					% double-sided
+	openright,				% begin new chapter on right side
+	notitlepage,			% use no standard title page
+	parskip=half,			% set paragraph skip to half of a line
+]{scrreprt}					% KOMA-script report
+%---------------------------------------------------------------------------
+
+\raggedbottom
+\KOMAoptions{cleardoublepage=plain}			% Add header and footer on blank pages
+
+
+% Load Standard Packages:
+%---------------------------------------------------------------------------
+\usepackage[standard-baselineskips]{cmbright}
+
+\usepackage[ngerman,english]{babel}										% english hyphenation
+%\usepackage[latin1]{inputenc}  							% Unix/Linux - load extended character set (ISO 8859-1)
+\usepackage[ansinew]{inputenc}  							% Windows - load extended character set (ISO 8859-1)
+\usepackage[T1]{fontenc}											% hyphenation of words with �,� and �
+\usepackage{textcomp}													% additional symbols
+\usepackage{ae}																% better resolution of Type1-Fonts 
+\usepackage{fancyhdr}													% simple manipulation of header and footer 
+\usepackage{etoolbox}													% color manipulation of header and footer
+\usepackage{graphicx}                      		% integration of images
+\usepackage{float}														% floating objects
+\usepackage{caption}													% for captions of figures and tables
+\usepackage{booktabs}													% package for nicer tables
+\usepackage{tocvsec2}													% provides means of controlling the sectional numbering
+%---------------------------------------------------------------------------
+
+% Load Math Packages
+%---------------------------------------------------------------------------
+\usepackage{amsmath}                    	   	% various features to facilitate writing math formulas
+\usepackage{amsthm}                       	 	% enhanced version of latex's newtheorem
+\usepackage{amsfonts}                      		% set of miscellaneous TeX fonts that augment the standard CM
+\usepackage{amssymb}													% mathematical special characters
+\usepackage{exscale}													% mathematical size corresponds to textsize
+%---------------------------------------------------------------------------
+
+% Package to facilitate placement of boxes at absolute positions
+%---------------------------------------------------------------------------
+\usepackage[absolute]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+%---------------------------------------------------------------------------					
+			
+% Definition of Colors
+%---------------------------------------------------------------------------
+\RequirePackage{color}                          % Color (not xcolor!)
+\definecolor{linkblue}{rgb}{0,0,0.8}            % Standard
+\definecolor{darkblue}{rgb}{0,0.08,0.45}        % Dark blue
+\definecolor{bfhgrey}{rgb}{0.41,0.49,0.57}      % BFH grey
+%\definecolor{linkcolor}{rgb}{0,0,0.8}     			% Blue for the web- and cd-version!
+\definecolor{linkcolor}{rgb}{0,0,0}        			% Black for the print-version!
+%---------------------------------------------------------------------------
+
+% Hyperref Package (Create links in a pdf)
+%---------------------------------------------------------------------------
+\usepackage[
+	pdftex,ngerman,bookmarks,plainpages=false,pdfpagelabels,
+	backref = {false},										% No index backreference
+	colorlinks = {true},                  % Color links in a PDF
+	hypertexnames = {true},               % no failures "same page(i)"
+	bookmarksopen = {true},               % opens the bar on the left side
+	bookmarksopenlevel = {0},             % depth of opened bookmarks
+	pdftitle = {Template f�r Bachelor Thesis},	   	% PDF-property
+	pdfauthor = {brd3},        					  % PDF-property
+	pdfsubject = {LaTeX Template},        % PDF-property
+	linkcolor = {linkcolor},              % Color of Links
+	citecolor = {linkcolor},              % Color of Cite-Links
+	urlcolor = {linkcolor},               % Color of URLs
+]{hyperref}
+%---------------------------------------------------------------------------
+
+% Set up page dimension
+%---------------------------------------------------------------------------
+\usepackage{geometry}
+\geometry{
+	a4paper,
+	left=33mm, %28
+	right=20mm, %15
+	top=30mm,
+	headheight=20mm,
+	headsep=10mm,
+	textheight=242mm,
+	footskip=15mm
+}
+%---------------------------------------------------------------------------
+
+% Makeindex Package
+%---------------------------------------------------------------------------
+\usepackage{makeidx}                         		% To produce index
+\makeindex                                    	% Index-Initialisation
+%---------------------------------------------------------------------------
+
+% Glossary Package
+%---------------------------------------------------------------------------
+% the glossaries package uses makeindex
+% if you use TeXnicCenter do the following steps:
+%  - Goto "Ausgabeprofile definieren" (ctrl + F7)
+%  - Select the profile "LaTeX => PDF"
+%  - Add in register "Nachbearbeitung" a new "Postprozessoren" point named Glossar
+%  - Select makeindex.exe in the field "Anwendung" ( ..\MiKTeX x.x\miktex\bin\makeindex.exe )
+%  - Add this [ -s "%tm.ist" -t "%tm.glg" -o "%tm.gls" "%tm.glo" ] in the field "Argumente"
+%
+% for futher informations go to http://ewus.de/tipp-1029.html
+%---------------------------------------------------------------------------
+\usepackage[nonumberlist]{glossaries}
+\makeglossaries
+\include{database/glossary}
+%---------------------------------------------------------------------------
+
+\usepackage{pdfpages}
+
+% Intro:
+%---------------------------------------------------------------------------
+\begin{document}                              	% Start Document
+\settocdepth{section}														% Set depth of toc
+\pagenumbering{roman}														
+%---------------------------------------------------------------------------
+
+\input{leader/title}					% Titel der Arbeit aus Datei titel.tex lesen
+\input{leader/version}				% Versionsnummer und -datum aus Datei version.tex lesen
+
+% Set up header and footer
+%---------------------------------------------------------------------------
+\makeatletter
+\patchcmd{\@fancyhead}{\rlap}{\color{bfhgrey}\rlap}{}{}		% new color of header
+\patchcmd{\@fancyfoot}{\rlap}{\color{bfhgrey}\rlap}{}{}		% new color of footer
+\makeatother
+
+\fancyhf{}																		% clean all fields
+\fancypagestyle{plain}{												% new definition of plain style	
+	\fancyfoot[OR,EL]{\footnotesize \thepage} 	% footer right part --> page number
+	\fancyfoot[OL,ER]{\footnotesize \heading, Version \versionnumber, \versiondate}	% footer even page left part 
+}
+
+\renewcommand{\chaptermark}[1]{\markboth{\thechapter.  #1}{}}
+\renewcommand{\headrulewidth}{0pt}				% no header stripline
+\renewcommand{\footrulewidth}{0pt} 				% no bottom stripline
+
+\pagestyle{plain}
+%---------------------------------------------------------------------------
+
+
+% Title Page and Abstract
+%---------------------------------------------------------------------------
+%\include{leader/frontpage_without_picture}		% activate for frontpage without picture
+\include{leader/frontpage_with_picture}		% activate for frontpage with picture
+\include{leader/versions}
+\cleardoubleemptypage
+\setcounter{page}{1}
+\cleardoublepage
+\phantomsection
+\addcontentsline{toc}{chapter}{Management Summary}
+\include{leader/management_summary}
+\cleardoubleemptypage
+%---------------------------------------------------------------------------
+
+% Table of contents
+%---------------------------------------------------------------------------
+\tableofcontents
+\cleardoublepage
+%---------------------------------------------------------------------------
+
+% Main part:
+%---------------------------------------------------------------------------
+\pagenumbering{arabic}
+
+\include{chapters/introduction}
+\include{chapters/projectevolution}
+\include{chapters/behaviourtrees}
+\include{chapters/utilityai}
+\include{chapters/comparisontoothersolutions}
+\include{chapters/utilitydesigner}
+\include{chapters/performance}
+\include{chapters/nextsteps}
+\include{chapters/conclusions}
+%---------------------------------------------------------------------------
+
+% Selbst�ndigkeitserkl�rung
+%---------------------------------------------------------------------------
+\cleardoublepage
+\phantomsection 
+\addcontentsline{toc}{chapter}{Declaration of authorship}
+\include{leader/declaration_authorship}
+%---------------------------------------------------------------------------
+
+% Glossary
+%---------------------------------------------------------------------------
+%\cleardoublepage
+%\phantomsection 
+%\addcontentsline{toc}{chapter}{Glossay}
+%\renewcommand{\glossaryname}{Glossay}
+%\printglossary
+%---------------------------------------------------------------------------
+
+% Bibliography
+%---------------------------------------------------------------------------
+\cleardoublepage
+\phantomsection 
+\addcontentsline{toc}{chapter}{Bibliography}
+\bibliographystyle{IEEEtranS}
+\bibliography{database/bibliography}{}
+%---------------------------------------------------------------------------
+
+% Listings
+%---------------------------------------------------------------------------
+\cleardoublepage
+\phantomsection 
+\addcontentsline{toc}{chapter}{List of figures}
+\listoffigures
+%\cleardoublepage
+%\phantomsection 
+%\addcontentsline{toc}{chapter}{List of tables}
+%\listoftables
+%---------------------------------------------------------------------------
+
+% Index
+%---------------------------------------------------------------------------
+\cleardoublepage
+\phantomsection 
+\addcontentsline{toc}{chapter}{Index}
+\printindex
+%---------------------------------------------------------------------------
+
+% Attachment:
+%---------------------------------------------------------------------------
+\appendix
+\settocdepth{section}
+\include{appendix/requirementspecification}
+\include{appendix/appendixgit}
+\include{appendix/appendixstories}
+\include{appendix/appendixtimetable}
+\include{appendix/appendixutilitydesignermanual}
+%\include{appendix/appendixexemple}
+%\include{appendix/appendixexempleB}
+%\include{appendix/contentCDROM}
+%---------------------------------------------------------------------------
+
+%---------------------------------------------------------------------------
+\end{document}
+

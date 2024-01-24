@@ -1,0 +1,120 @@
+#node-border {
+    background-color: rgb(56, 56, 56);
+    border-left-color: rgb(37, 37, 37);
+    border-right-color: rgb(37, 37, 37);
+    border-top-color: rgb(37, 37, 37);
+    border-bottom-color: rgb(37, 37, 37);
+    border-left-width: 1px;
+    border-right-width: 1px;
+    border-top-width: 1px;
+    border-bottom-width: 1px;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+#input {
+    align-items: center;
+}
+
+#output {
+    align-items: center;
+}
+
+#selection-border {
+    border-left-color: rgb(58, 163, 188);
+    border-right-color: rgb(58, 163, 188);
+    border-top-color: rgb(58, 163, 188);
+    border-bottom-color: rgb(58, 163, 188);
+    border-left-width: 0;
+    border-right-width: 0;
+    border-top-width: 0;
+    border-bottom-width: 0;
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+}
+
+:hover > #selection-border {
+    border-left-width: 1px;
+    border-right-width: 1px;
+    border-top-width: 1px;
+    border-bottom-width: 1px;
+}
+
+:selected > #selection-border {
+    border-left-width: 2px;
+    border-right-width: 2px;
+    border-top-width: 2px;
+    border-bottom-width: 2px;
+}
+
+.node {
+    min-width: 150px;
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+#title {
+    -unity-font-style: bold;
+    font-size: 14px;
+    margin-top: 1px;
+    margin-bottom: 2px;
+}
+
+#description {
+    font-size: 10px;
+    white-space: normal;
+    max-width: 140px;
+    -unity-text-align: middle-center;
+}
+
+#divider {
+    min-height: 1px;
+    background-color: rgb(77, 77, 77);
+}
+
+.action #input {
+    background-color: rgb(224, 82, 99);
+}
+
+.conditional #input {
+    background-color: rgb(255, 229, 212);
+}
+
+.composite #input {
+    background-color: rgb(70, 119, 171);
+}
+
+.decorator #input {
+    background-color: rgb(49, 186, 166);
+}
+
+#node-state {
+    position: absolute;
+    left: -1px;
+    top: -1px;
+    right: -1px;
+    bottom: -1px;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+.running #node-state {
+    background-color: rgb(138, 0, 255);
+}
+
+.success #node-state {
+    background-color: rgb(9, 255, 0);
+}
+
+.failure #node-state {
+    background-color: rgb(255, 0, 0);
+}

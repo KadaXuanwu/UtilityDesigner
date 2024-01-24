@@ -1,0 +1,95 @@
+
+\babel@toc {english}{}\relax 
+\save@tocdepth \setcounter {tocdepth}{1}
+\contentsline {chapter}{Management Summary}{i}{section*.1}%
+\contentsline {chapter}{\numberline {1}Introduction}{1}{chapter.1}%
+\contentsline {chapter}{\numberline {2}Project Evolution}{3}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Initial Idea}{3}{section.2.1}%
+\contentsline {section}{\numberline {2.2}Trouble}{6}{section.2.2}%
+\contentsline {section}{\numberline {2.3}Better Approach}{6}{section.2.3}%
+\contentsline {section}{\numberline {2.4}Why It Fails}{7}{section.2.4}%
+\contentsline {chapter}{\numberline {3}Behaviour trees}{9}{chapter.3}%
+\contentsline {section}{\numberline {3.1}What Are Behaviour Trees}{9}{section.3.1}%
+\contentsline {section}{\numberline {3.2}Example Implementations}{10}{section.3.2}%
+\contentsline {subsection}{\numberline {3.2.1}Agent Scene From Advanced 3D Applications}{10}{subsection.3.2.1}%
+\contentsline {subsection}{\numberline {3.2.2}Tour Guide}{11}{subsection.3.2.2}%
+\contentsline {section}{\numberline {3.3}Strengths}{12}{section.3.3}%
+\contentsline {section}{\numberline {3.4}Weaknesses}{12}{section.3.4}%
+\contentsline {chapter}{\numberline {4}Utility AI}{13}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Idea Of Utility AI}{13}{section.4.1}%
+\contentsline {section}{\numberline {4.2}Terminology}{13}{section.4.2}%
+\contentsline {section}{\numberline {4.3}How It Works}{14}{section.4.3}%
+\contentsline {subsection}{\numberline {4.3.1}General Principle}{14}{subsection.4.3.1}%
+\contentsline {subsection}{\numberline {4.3.2}Calculation Of The Score}{15}{subsection.4.3.2}%
+\contentsline {subsection}{\numberline {4.3.3}Example Scenario}{16}{subsection.4.3.3}%
+\contentsline {section}{\numberline {4.4}Example Implementations}{17}{section.4.4}%
+\contentsline {subsection}{\numberline {4.4.1}Main Goal Of The Implementations}{17}{subsection.4.4.1}%
+\contentsline {subsection}{\numberline {4.4.2}User Interface}{18}{subsection.4.4.2}%
+\contentsline {section}{\numberline {4.5}Examples}{19}{section.4.5}%
+\contentsline {subsection}{\numberline {4.5.1}Daily Routine}{19}{subsection.4.5.1}%
+\contentsline {subsection}{\numberline {4.5.2}Spaceship}{20}{subsection.4.5.2}%
+\contentsline {section}{\numberline {4.6}Strengths}{23}{section.4.6}%
+\contentsline {section}{\numberline {4.7}Weaknesses}{23}{section.4.7}%
+\contentsline {chapter}{\numberline {5}Comparison To Other Solutions}{25}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Goal Oriented Action Planning}{25}{section.5.1}%
+\contentsline {section}{\numberline {5.2}Reinforcement Learning}{26}{section.5.2}%
+\contentsline {section}{\numberline {5.3}Overview Of All Solutions}{27}{section.5.3}%
+\contentsline {chapter}{\numberline {6}Utility Designer}{29}{chapter.6}%
+\contentsline {section}{\numberline {6.1}Introduction}{29}{section.6.1}%
+\contentsline {section}{\numberline {6.2}Use Cases}{29}{section.6.2}%
+\contentsline {paragraph}{\nonumberline Expandability:}{29}{paragraph*.23}%
+\contentsline {paragraph}{\nonumberline Built-in Behaviour Tree:}{29}{paragraph*.25}%
+\contentsline {paragraph}{\nonumberline Multiple NPCs:}{30}{paragraph*.27}%
+\contentsline {paragraph}{\nonumberline Dynamic Environments:}{30}{paragraph*.29}%
+\contentsline {paragraph}{\nonumberline Easy To Adjust:}{30}{paragraph*.31}%
+\contentsline {section}{\numberline {6.3}Implementation}{30}{section.6.3}%
+\contentsline {subsection}{\numberline {6.3.1}Technology Stack}{30}{subsection.6.3.1}%
+\contentsline {subsubsection}{\nonumberline Overview}{30}{subsubsection*.33}%
+\contentsline {subsubsection}{\nonumberline Unity}{30}{subsubsection*.35}%
+\contentsline {subsubsection}{\nonumberline C\#}{31}{subsubsection*.37}%
+\contentsline {subsubsection}{\nonumberline Unity's UI Toolkit}{31}{subsubsection*.39}%
+\contentsline {subsection}{\numberline {6.3.2}Software Architecture}{31}{subsection.6.3.2}%
+\contentsline {subsection}{\numberline {6.3.3}Discarded Concepts}{32}{subsection.6.3.3}%
+\contentsline {paragraph}{\nonumberline Scene References:}{32}{paragraph*.41}%
+\contentsline {paragraph}{\nonumberline Execution Tab:}{33}{paragraph*.43}%
+\contentsline {subsection}{\numberline {6.3.4}Third Party Code}{34}{subsection.6.3.4}%
+\contentsline {section}{\numberline {6.4}Example Scenes}{34}{section.6.4}%
+\contentsline {subsection}{\numberline {6.4.1}Daily Routine}{34}{subsection.6.4.1}%
+\contentsline {subsection}{\numberline {6.4.2}Survival}{36}{subsection.6.4.2}%
+\contentsline {chapter}{\numberline {7}Performance}{39}{chapter.7}%
+\contentsline {section}{\numberline {7.1}Computational Efficiency}{39}{section.7.1}%
+\contentsline {subsection}{\numberline {7.1.1}Evaluation}{39}{subsection.7.1.1}%
+\contentsline {subsection}{\numberline {7.1.2}Execution}{39}{subsection.7.1.2}%
+\contentsline {section}{\numberline {7.2}Profiling}{40}{section.7.2}%
+\contentsline {chapter}{\numberline {8}Next Steps}{43}{chapter.8}%
+\contentsline {section}{\numberline {8.1}Improvements}{43}{section.8.1}%
+\contentsline {paragraph}{\nonumberline More Base Types:}{43}{paragraph*.54}%
+\contentsline {paragraph}{\nonumberline Inheritance:}{43}{paragraph*.56}%
+\contentsline {paragraph}{\nonumberline Renaming:}{43}{paragraph*.58}%
+\contentsline {paragraph}{\nonumberline Undo / Redo:}{43}{paragraph*.60}%
+\contentsline {paragraph}{\nonumberline Blackboard:}{43}{paragraph*.62}%
+\contentsline {paragraph}{\nonumberline Backwards Compatibility:}{44}{paragraph*.64}%
+\contentsline {section}{\numberline {8.2}Publishing To The Unity Asset Store}{44}{section.8.2}%
+\contentsline {paragraph}{\nonumberline Preparing The Asset}{45}{paragraph*.67}%
+\contentsline {paragraph}{\nonumberline Packaging The Asset}{45}{paragraph*.69}%
+\contentsline {paragraph}{\nonumberline Submitting The Asset}{45}{paragraph*.71}%
+\contentsline {paragraph}{\nonumberline After Approval}{45}{paragraph*.73}%
+\contentsline {chapter}{\numberline {9}Conclusion / Results}{47}{chapter.9}%
+\contentsline {chapter}{Declaration of authorship}{49}{section*.74}%
+\contentsline {chapter}{Bibliography}{51}{section*.76}%
+\contentsline {chapter}{List of figures}{53}{section*.78}%
+\contentsline {chapter}{APPENDICES}{55}{chapter*.81}%
+\contentsline {chapter}{\numberline {A}Requirement Specification}{55}{appendix.A}%
+\contentsline {chapter}{Index}{55}{section*.80}%
+\save@tocdepth \setcounter {tocdepth}{1}
+\contentsline {chapter}{\numberline {B}Git Repository}{57}{appendix.B}%
+\contentsline {section}{\numberline {B.1}Link}{57}{section.B.1}%
+\contentsline {section}{\numberline {B.2}Read Me}{57}{section.B.2}%
+\contentsline {chapter}{\numberline {C}Stories}{59}{appendix.C}%
+\contentsline {section}{\numberline {C.1}Tour Guide For Aventicum VR}{59}{section.C.1}%
+\contentsline {section}{\numberline {C.2}Zombie Apocalypse}{59}{section.C.2}%
+\contentsline {section}{\numberline {C.3}Escort Quest}{60}{section.C.3}%
+\contentsline {section}{\numberline {C.4}Defending NPC}{60}{section.C.4}%
+\contentsline {chapter}{\numberline {D}Timetable}{61}{appendix.D}%
+\contentsline {chapter}{\numberline {E}Utility Designer Manual}{63}{appendix.E}%
+\providecommand \tocbasic@end@toc@file {}\tocbasic@end@toc@file 

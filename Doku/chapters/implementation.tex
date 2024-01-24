@@ -1,0 +1,38 @@
+\chapter{Implementation}
+\label{chap:implementation}
+\section{Technology Stack}
+\label{sec:implementation_technologystack}
+
+\subsection{Overview}
+\label{sec:implementation_overview}
+
+The Utility Designer leverages different technologies to facilitate a synergistic relationship between utility AI and behaviour trees, thereby simplifying the process of generating advanced and dynamic behaviours. Unity and C\# both have been around for quite some time, making them mature and well-established technologies. Despite their longevity, they are still actively maintained and updated to accommodate new advancements in software development. On the other hand, Unity's UI Toolkit is relatively new and continues to be in active development.
+
+\subsection{Unity}
+\label{sec:implementation_unity}
+
+Unity is the foundational layer of the tool. Utility Designer is built in Unity, because Unity's Asset Store offers a good way to share tools and assets with other developers. The newest version of Unity 2022 has been used, as every version adds more features to UI-Toolkit, and it's the newest stable version up to this time. This cross-platform game engine is utilized as the baseline for all the development activities. Being robust, feature-rich, and versatile, Unity serves as the cornerstone in the creation and operation of the Utility Designer, handling everything from 3D environment rendering and user input management to game physics.
+
+\subsection{C\#}
+\label{sec:implementation_csharp}
+
+The core logic of Utility Designer is written in C\#, a powerful object-oriented programming language. C\# is employed for scripting the behaviour of NPCs, implementing utility AI and behaviour tree logic, and managing the interactions of different components within the game. This programming language grants access to a wide array of libraries and features, thus allowing for a high degree of customization and control over game mechanics.
+
+\subsection{Unity's UI Toolkit}
+\label{sec:implementation_uitoolkit}
+
+Unity offers a system that helps building editor windows, which is called UI Toolkit. It has been used to provide a visually engaging and interactive user interface. The UI Toolkit is a flexible and efficient system for building UI in Unity and is employed to create a comprehensive, yet straightforward and user-friendly graphical interface for Utility Designer. The toolkit allows for the designing of the UI using UXML and USS, languages similar to HTML and CSS respectively, thereby enabling a highly flexible and scalable UI design.
+
+\section{Software Architecture}
+\label{sec:implementation_softwarearchitecture}
+
+TODO.
+
+\section{Third Party Code}
+\label{sec:implementation_thirdpartycode}
+
+In order to make the development process faster, and thus be able to achieve more goals, the help of a few external tools and websites have been included. Extensive research was conducted across multiple websites such as Unity's Documentation (Unity Docs)\footnote{\url{https://docs.unity.com}}, YouTube tutorials, mainly this one for the behaviour tree (YouTube)\footnote{\url{https://youtu.be/nKpM98I7PeM}} and (Stack Overflow)\footnote{\url{https://stackoverflow.com}}, among others.
+
+In addition, the AI-powered tool, ChatGPT (ChatGPT)\footnote{\url{https://chat.openai.com}}, and the autocorrection functionality provided by JetBrains' IDE for C\#, known as Rider (JetBrains Rider)\footnote{\url{https://www.jetbrains.com/rider/}}, were instrumental in improving efficiency and code quality.
+
+Besides the author and the tutor of this thesis, there were no contributions to the code from anyone else. But it is noteworthy that the basic idea of how utility AI is implemented comes from Project 2, the previous project before the thesis.

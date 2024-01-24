@@ -1,0 +1,49 @@
+\babel@toc {english}{}\relax 
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {2.1}{\ignorespaces First Ideas\relax }}{3}{figure.caption.4}%
+\contentsline {figure}{\numberline {2.2}{\ignorespaces Example of the GUI in Unity\relax }}{4}{figure.caption.5}%
+\contentsline {figure}{\numberline {2.3}{\ignorespaces Features page 1\relax }}{5}{figure.caption.6}%
+\contentsline {figure}{\numberline {2.4}{\ignorespaces Features page 2\relax }}{5}{figure.caption.6}%
+\contentsline {figure}{\numberline {2.5}{\ignorespaces Features\relax }}{5}{figure.caption.6}%
+\contentsline {figure}{\numberline {2.6}{\ignorespaces Sequence graph example for tour guide\relax }}{6}{figure.caption.7}%
+\contentsline {figure}{\numberline {2.7}{\ignorespaces Sequence graph example for an agent\relax }}{7}{figure.caption.8}%
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {3.1}{\ignorespaces Example of a behaviour tree \cite {BehaviourTrees}\relax }}{9}{figure.caption.9}%
+\contentsline {figure}{\numberline {3.2}{\ignorespaces Scene in Unity with the agent\relax }}{10}{figure.caption.10}%
+\contentsline {figure}{\numberline {3.3}{\ignorespaces Behaviour tree for the agent\relax }}{10}{figure.caption.10}%
+\contentsline {figure}{\numberline {3.4}{\ignorespaces Scene in Unity with the tour guide\relax }}{11}{figure.caption.11}%
+\contentsline {figure}{\numberline {3.5}{\ignorespaces Behaviour tree for the tour guide\relax }}{11}{figure.caption.12}%
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {4.1}{\ignorespaces Sketch of a defending NPC, using utility AI\relax }}{14}{figure.caption.13}%
+\contentsline {figure}{\numberline {4.2}{\ignorespaces Sketch of a defending NPC, using utility AI and with example values\relax }}{16}{figure.caption.14}%
+\contentsline {figure}{\numberline {4.3}{\ignorespaces ScriptableObject for the extinguish fire action\relax }}{18}{figure.caption.15}%
+\contentsline {figure}{\numberline {4.4}{\ignorespaces Scene in Unity for the agent's daily routine\relax }}{19}{figure.caption.16}%
+\contentsline {figure}{\numberline {4.5}{\ignorespaces Structure of the utility AI for the agent\relax }}{19}{figure.caption.17}%
+\contentsline {figure}{\numberline {4.6}{\ignorespaces Close up view of a single spaceship in Unity\relax }}{20}{figure.caption.18}%
+\contentsline {figure}{\numberline {4.7}{\ignorespaces Structure of the utility AI for one agent\relax }}{21}{figure.caption.19}%
+\contentsline {figure}{\numberline {4.8}{\ignorespaces Scene in Unity showing an ongoing battle\relax }}{22}{figure.caption.20}%
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {5.1}{\ignorespaces Comparison of solutions used for NPCs \cite {Comparison}\relax }}{27}{figure.caption.21}%
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {6.1}{\ignorespaces Discarded implementation of a state machine\relax }}{33}{figure.caption.44}%
+\contentsline {figure}{\numberline {6.2}{\ignorespaces Scene in Unity for the agent's daily routine\relax }}{34}{figure.caption.45}%
+\contentsline {figure}{\numberline {6.3}{\ignorespaces Evaluation tab for the agent in Utility Designer\relax }}{35}{figure.caption.46}%
+\contentsline {figure}{\numberline {6.4}{\ignorespaces Execution tab for the agent in Utility Designer\relax }}{35}{figure.caption.47}%
+\contentsline {figure}{\numberline {6.5}{\ignorespaces Survival scene in Unity\relax }}{36}{figure.caption.48}%
+\contentsline {figure}{\numberline {6.6}{\ignorespaces Evaluation tab of Utility Designer\relax }}{37}{figure.caption.49}%
+\contentsline {figure}{\numberline {6.7}{\ignorespaces Execution tab of Utility Designer\relax }}{37}{figure.caption.50}%
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {7.1}{\ignorespaces Profiler with evaluation tick rate = 0.1s and execution tick rate = update\relax }}{40}{figure.caption.51}%
+\contentsline {figure}{\numberline {7.2}{\ignorespaces Profiler with evaluation tick rate = 0.5s and execution tick rate = 0.2s\relax }}{41}{figure.caption.52}%
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {8.1}{\ignorespaces Asset Store Page Preview 1\relax }}{44}{figure.caption.65}%
+\contentsline {figure}{\numberline {8.2}{\ignorespaces Page Preview 2\relax }}{44}{figure.caption.65}%
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {D.1}{\ignorespaces Timetable made at the start of the project\relax }}{62}{figure.caption.82}%
+\addvspace {10\p@ }
+\providecommand \tocbasic@end@toc@file {}\tocbasic@end@toc@file 
