@@ -7,51 +7,68 @@ namespace KadaXuanwu.UtilityDesigner.Scripts.Editor
     [CustomEditor(typeof(UtilityDesigner))]
     public class UtilityDesignerEditor : UnityEditor.Editor
     {
+        private SerializedProperty utilityBehaviour;
+        private SerializedProperty sceneReferencesObjName;
+        private SerializedProperty tickRateEvaluation;
+        private SerializedProperty useUpdateAsTickRateForEvaluation;
+        private SerializedProperty logEvaluationToFile;
+        private SerializedProperty tickRateLog;
+        private SerializedProperty tickRateExecution;
+        private SerializedProperty useUpdateAsTickRateForExecution;
+
+        private void OnEnable()
+        {
+            utilityBehaviour = serializedObject.FindProperty("utilityBehaviour");
+            sceneReferencesObjName = serializedObject.FindProperty("sceneReferencesObjName");
+            tickRateEvaluation = serializedObject.FindProperty("tickRateEvaluation");
+            useUpdateAsTickRateForEvaluation = serializedObject.FindProperty("useUpdateAsTickRateForEvaluation");
+            logEvaluationToFile = serializedObject.FindProperty("logEvaluationToFile");
+            tickRateLog = serializedObject.FindProperty("tickRateLog");
+            tickRateExecution = serializedObject.FindProperty("tickRateExecution");
+            useUpdateAsTickRateForExecution = serializedObject.FindProperty("useUpdateAsTickRateForExecution");
+        }
+
         public override void OnInspectorGUI()
         {
-            UtilityDesigner utilityDesigner = (UtilityDesigner)target;
-
             serializedObject.Update();
 
-            utilityDesigner.utilityBehaviour = (UtilityBehaviour)EditorGUILayout.ObjectField(new GUIContent("Utility Behaviour",
-                    "The behaviour used for this object."),
-                utilityDesigner.utilityBehaviour, typeof(UtilityBehaviour), true);
-            utilityDesigner.sceneReferencesObjName = EditorGUILayout.TextField(new GUIContent("Scene Refs Obj Name", 
-                    "Name of the GameObject with a SceneReferences component to be used for the action nodes."), 
-                utilityDesigner.sceneReferencesObjName);
+            EditorGUILayout.PropertyField(utilityBehaviour, new GUIContent("Utility Behaviour",
+                    "The behaviour used for this object."));
+            EditorGUILayout.PropertyField(sceneReferencesObjName, new GUIContent("Scene Refs Obj Name",
+                    "Name of the GameObject with a SceneReferences component to be used for the action nodes."));
 
             EditorGUILayout.Space();
             EditorGUILayout.LabelField("Evaluation", EditorStyles.boldLabel);
 
-            if (!utilityDesigner.useUpdateAsTickRateForEvaluation)
-                utilityDesigner.tickRateEvaluation = EditorGUILayout.Slider(new GUIContent("Tick Rate",
-                    "The tick rate of which the evaluation is updated."),
-                    utilityDesigner.tickRateEvaluation, 0.01f, 1f);
+            if (!useUpdateAsTickRateForEvaluation.boolValue)
+            {
+                EditorGUILayout.Slider(tickRateEvaluation, 0.01f, 1f, new GUIContent("Tick Rate",
+                    "The tick rate of which the evaluation is updated."));
+            }
 
-            utilityDesigner.useUpdateAsTickRateForEvaluation = EditorGUILayout.Toggle(new GUIContent("Use Update As Tick Rate",
-                "Uses Unity's Update method as tick rate instead."),
-                utilityDesigner.useUpdateAsTickRateForEvaluation);
+            EditorGUILayout.PropertyField(useUpdateAsTickRateForEvaluation, new GUIContent("Use Update As Tick Rate",
+                "Uses Unity's Update method as tick rate instead."));
 
-            utilityDesigner.logEvaluationToFile = EditorGUILayout.Toggle(new GUIContent("Log To File",
-                "Creates a new text file called 'UtilityDesignerLog' in the Assets folder and logs the current stats of the evaluation tab to it. Overrides if it already exists."),
-                utilityDesigner.logEvaluationToFile);
+            EditorGUILayout.PropertyField(logEvaluationToFile, new GUIContent("Log To File",
+                "Creates a new text file called 'UtilityDesignerLog' in the Assets folder and logs the current stats of the evaluation tab to it. Overrides if it already exists."));
 
-            if (utilityDesigner.logEvaluationToFile)
-                utilityDesigner.tickRateLog = EditorGUILayout.Slider(new GUIContent("Logging tick rate",
-                        "The tick rate of which the stats are logged."),
-                        utilityDesigner.tickRateLog, 0.1f, 10f);
+            if (logEvaluationToFile.boolValue)
+            {
+                EditorGUILayout.Slider(tickRateLog, 0.1f, 10f, new GUIContent("Logging tick rate",
+                    "The tick rate of which the stats are logged."));
+            }
 
             EditorGUILayout.Space();
             EditorGUILayout.LabelField("Execution", EditorStyles.boldLabel);
 
-            if (!utilityDesigner.useUpdateAsTickRateForExecution)
-                utilityDesigner.tickRateExecution = EditorGUILayout.Slider(new GUIContent("Tick Rate",
-                    "The tick rate of which the execution is updated."),
-                    utilityDesigner.tickRateExecution, 0.01f, 1f);
+            if (!useUpdateAsTickRateForExecution.boolValue)
+            {
+                EditorGUILayout.Slider(tickRateExecution, 0.01f, 1f, new GUIContent("Tick Rate",
+                    "The tick rate of which the execution is updated."));
+            }
 
-            utilityDesigner.useUpdateAsTickRateForExecution = EditorGUILayout.Toggle(new GUIContent("Use Update As Tick Rate",
-                "Uses Unity's Update method as tick rate instead."),
-                utilityDesigner.useUpdateAsTickRateForExecution);
+            EditorGUILayout.PropertyField(useUpdateAsTickRateForExecution, new GUIContent("Use Update As Tick Rate",
+                "Uses Unity's Update method as tick rate instead."));
 
             EditorGUILayout.Space();
 
@@ -64,7 +81,9 @@ namespace KadaXuanwu.UtilityDesigner.Scripts.Editor
             GUILayout.FlexibleSpace();
             if (GUILayout.Button("Open editor", buttonStyle, GUILayout.Height(22),
                     GUILayout.Width(EditorGUIUtility.currentViewWidth * 0.6f)))
+            {
                 UtilityDesignerEditorWindow.OpenWindow();
+            }
             GUILayout.FlexibleSpace();
             EditorGUILayout.EndHorizontal();
 
