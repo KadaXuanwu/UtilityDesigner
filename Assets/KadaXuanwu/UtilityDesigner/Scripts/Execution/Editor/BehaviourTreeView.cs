@@ -20,7 +20,7 @@ namespace KadaXuanwu.UtilityDesigner.Scripts.Execution.Editor
         private BehaviourTree _behaviourTree;
         private UtilityDesigner _utilityDesigner;
         private UtilityDesignerEditorWindow _utilityDesignerEditorWindow;
-        
+        private NodeSearchWindow _nodeSearchWindow;
 
         public BehaviourTreeView()
         {
@@ -50,6 +50,22 @@ namespace KadaXuanwu.UtilityDesigner.Scripts.Execution.Editor
                         e.StopPropagation();
                         break;
                 }
+            else if (e.keyCode == KeyCode.Space)
+            {
+                ShowNodeSearch();
+                e.StopPropagation();
+            }
+        }
+
+        private void InitializeNodeSearch()
+        {
+            _nodeSearchWindow = ScriptableObject.CreateInstance<NodeSearchWindow>();
+            _nodeSearchWindow.Initialize(this, _utilityDesignerEditorWindow);
+        }
+
+        private void ShowNodeSearch()
+        {
+            SearchWindow.Open(new SearchWindowContext(GUIUtility.GUIToScreenPoint(Event.current.mousePosition)), _nodeSearchWindow);
         }
 
         private NodeView FindNodeView(BaseNode node)
@@ -65,6 +81,8 @@ namespace KadaXuanwu.UtilityDesigner.Scripts.Execution.Editor
             _behaviourTree = tree;
             _utilityDesigner = utilityDesigner;
             _utilityDesignerEditorWindow = utilityDesignerEditorWindow;
+
+            InitializeNodeSearch();
 
             graphViewChanged -= OnGraphViewChanged;
             DeleteElements(graphElements);
@@ -220,7 +238,7 @@ namespace KadaXuanwu.UtilityDesigner.Scripts.Execution.Editor
             }
         }
 
-        private void CreateNode(Type type, Vector2 pos)
+        internal void CreateNode(Type type, Vector2 pos)
         {
             BaseNode node = _behaviourTree.CreateNode(type, pos);
             CreateNodeView(node);
