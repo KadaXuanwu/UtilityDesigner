@@ -186,6 +186,8 @@ namespace KadaXuanwu.UtilityDesigner.Scripts.Execution.Editor
             var types = TypeCache.GetTypesDerivedFrom<T>();
             foreach (var type in types)
             {
+                if (type.IsAbstract) continue;
+
                 var isUtilityDesignerAssembly = type.Assembly.GetName().Name == "UtilityDesigner";
                 var path = isUtilityDesignerAssembly
                     ? $"{menuCategory}/{Utils.AddSpacesBeforeUppercase(type.Name)}"
@@ -199,6 +201,8 @@ namespace KadaXuanwu.UtilityDesigner.Scripts.Execution.Editor
             var types = TypeCache.GetTypesDerivedFrom<T>();
             foreach (var type in types)
             {
+                if (type.IsAbstract) continue;
+
                 var isUtilityDesignerAssembly = type.Assembly.GetName().Name == "UtilityDesigner";
                 var path = isUtilityDesignerAssembly
                     ? $"{menuCategory}/{Utils.AddSpacesBeforeUppercase(type.Name)}"
