@@ -1,0 +1,6 @@
+﻿<Solution>
+  <Project Path="Assembly-CSharp.csproj" />
+  <Project Path="UtilityDesigner.csproj" />
+  <Project Path="KadaXuanwu.UtilityDesigner.Core.csproj" />
+  <Project Path="Assembly-CSharp-Editor.csproj" />
+</Solution>

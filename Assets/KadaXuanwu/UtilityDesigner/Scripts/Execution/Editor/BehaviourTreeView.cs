@@ -12,10 +12,10 @@ using UnityEngine.UIElements;
 
 namespace KadaXuanwu.UtilityDesigner.Scripts.Execution.Editor
 {
-    public class BehaviourTreeView : GraphView
+    [UxmlElement]
+    public partial class BehaviourTreeView : GraphView
     {
         internal Action<NodeView> onNodeSelected;
-        internal new class UxmlFactory : UxmlFactory<BehaviourTreeView, UxmlTraits> { }
 
         private BehaviourTree _behaviourTree;
         private UtilityDesigner _utilityDesigner;
