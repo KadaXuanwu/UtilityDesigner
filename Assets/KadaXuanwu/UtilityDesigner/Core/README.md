@@ -1,18 +1,31 @@
 # Utility Designer Core
 
 Utility Designer's engine-free core, for agents that run anywhere: in Unity, in a dedicated server, in a headless
-simulation. Plain C# (netstandard2.1, no UnityEngine), ticked by the caller with the time, deterministic for a seed.
+simulation. Plain C# (netstandard2.1, no UnityEngine). It decides exactly as Utility Designer v1 does; only the
+plumbing differs: the caller owns the clock and the random numbers, and a design is JSON.
+[V1-CHECKLIST.md](V1-CHECKLIST.md) lists every v1 feature and where 2.0 has it.
 
-- `Curve`: response curves, four numbers each (Linear, Polynomial, Logistic, Logit, Sine, Step) or keyframes.
-- `Reasoner`, `Bindings`, `Brain`: actions scored by their considerations (multiplied, compensated for their count, a
-  zero vetoes), once per target if the action has a target provider; dual utility ranks; commitment by momentum, a
-  minimum commitment, an interrupt threshold and sunk cost; cooldowns; a weighted random pick among near ties.
-- `Node`, `Sequence`, `Selector`, `Parallel`, `While` (conditional abort), `Repeat`, `Invert`, `Condition`, `Do`,
-  `Wait`, `Choose` (a brain choosing a child), `Blackboard` with typed keys.
-- `Compound`, `Method`, `Primitive`, `Planner`, `PlanRunner`: hierarchical task networks, methods picked by utility,
-  plans kept unless broken or beaten by a margin worth switching for.
-- `TaskPool`: jobs shared by a team of agents: tiers, greedy assignment, commitment, crews.
+- `Design`: consideration sets (local to an agent, or shared through `Globals`) and state sets. A `State` has
+  preconditions, evaluators (a `Curve` over a consideration, normalised between a min and a max) and a behaviour tree.
+- `Agent`: one agent running a design. `Evaluate(now)` moves the considerations on and chooses the state by v1's
+  score, `Weight · (BaseScore + Σ Score · EvalWeight / TotalEvalWeights)`, times the execution factor while it runs,
+  held to its min and max; fail chances drawn from the `Rng` the caller passes in. `Execute(now)` ticks the chosen
+  state's tree.
+- `Node`: v1's nodes that need no engine (`Sequence`, `Selector`, `Parallel`, `RandomSelector`, `RandomSequence`,
+  `Invert`, `Repeat`, `Success`, `Failure`, `WaitFixed`, `WaitRandom`, `LockState`, `LockStateDuration`,
+  `LockStateConsideration`, `UnlockState`, `ChangeStateSet`, `SetConsideration`, `ChangeConsideration`,
+  `CompareConsideration`, `TimeCheck`). The game's own subclass `ActionNode` or `ConditionalNode` and register with
+  `NodeTypes.Register`; their public fields are their settings.
+- `Curve`: keyframes (Unity's `AnimationCurve` shapes) or four numbers (Linear, Polynomial, Logistic, Logit, Sine,
+  Step).
 - `Designs`: versioned JSON, every tunable number as a `Parameter` (an optimizer's vector), override layers.
-- `Trace`: the last decisions, every option scored, as JSON lines.
+- `Trace`: the last evaluations, every state's score, as JSON lines; `Agent.WriteLog` writes v1's log entry.
+
+```csharp
+Design design = Designs.FromJson(json);
+Agent agent = new Agent(design, new Globals(), new Rng(seed));
+agent.Evaluate(now);
+agent.Execute(now);
+```
 
 `Samples~/HeadlessVillager` is an agent in a plain C# loop. Tests: `dotnet test` in `Tests~`.

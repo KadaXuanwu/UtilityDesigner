@@ -1,93 +1,119 @@
-using System;
 using System.Collections.Generic;
+using System.Globalization;
 using KadaXuanwu.UtilityDesigner.Core;
 
 namespace KadaXuanwu.UtilityDesigner.Samples {
-    // A villager in a plain C# loop, no engine: hungry, tired and bored by turns, it eats, sleeps, works or wanders, each a
-    // small tree; its brain chooses among them by utility, with momentum, a minimum commitment and a little randomness
-    // among near ties. The same seed lives the same day every time.
+    // The game's own node: writes what the villager saw into its memories.
+    public sealed class Remember : ActionNode {
+        public string Text = "";
+
+        protected override NodeState OnUpdate() {
+            ((Villager)Agent.Owner).Memories.Add(Text);
+            return NodeState.Success;
+        }
+    }
+
+    // A villager in a plain C# loop, no engine: hungry, tired and bored by turns, it eats, sleeps, works or wanders. Its
+    // needs are its own (a local consideration set); the food is the village's, shared by every villager given the same
+    // Globals. The same seed lives the same day every time.
     public sealed class Villager {
-        public float Hunger = 0.3f;
-        public float Energy = 0.8f;
-        public float Boredom = 0.2f;
-        public int Food = 3;
+        public readonly Agent Agent;
         public readonly List<string> Diary = new List<string>();
+        public readonly List<string> Memories = new List<string>();
 
-        private readonly Choose<Villager> _day;
-        private readonly Brain<Villager, int> _brain;
+        private State _doing;
 
-        public static Reasoner Design() {
-            Reasoner design = new Reasoner { Name = "Villager", Momentum = 1.2f, MinCommit = 2f, Interrupt = 1.4f, Spread = 0.15f };
-            design.Actions.Add(Action("Eat", 1f, Need("Hunger", Curve.Logistic(10f, 0.5f)), Need("Food", Curve.Step(0.2f), 0f, 5f)));
-            design.Actions.Add(Action("Sleep", 1f, Need("Tiredness", Curve.Polynomial(2f))));
-            design.Actions.Add(Action("Work", 0.6f, Need("Energy", Curve.Linear()), Need("Hunger", Curve.Linear(-1f, 1f))));
-            design.Actions.Add(Action("Wander", 0.5f, Need("Boredom", Curve.Linear())));
+        public static Design Design() {
+            NodeTypes.Register<Remember>();
+            Design design = new Design { Name = "Villager" };
+            design.ConsiderationSets.Add(new ConsiderationSet {
+                Name = "Needs", Local = true, Considerations = {
+                    new Consideration { Name = "Hunger", InitialValue = 0.3f, SetMinValue = true, SetMaxValue = true, MaxValue = 1f, ChangePerSecond = 0.1f },
+                    new Consideration { Name = "Energy", InitialValue = 0.8f, SetMinValue = true, SetMaxValue = true, MaxValue = 1f, ChangePerSecond = -0.08f },
+                    new Consideration { Name = "Boredom", InitialValue = 0.2f, SetMinValue = true, SetMaxValue = true, MaxValue = 1f, ChangePerSecond = 0.06f },
+                },
+            });
+            design.ConsiderationSets.Add(new ConsiderationSet {
+                Name = "Village", Considerations = { new Consideration { Name = "Food", InitialValue = 3f, SetMinValue = true } },
+            });
+            StateSet day = new StateSet { Name = "Day" };
+            design.StateSets.Add(day);
+
+            // Eats for a second, if the village has food; hunger gone, another state takes over.
+            day.States.Add(new State {
+                Name = "Eat", ExecutionFactor = 1.2f,
+                Preconditions = { new Precondition { Name = "Food left", Consideration = "Village | Food", Comparator = Comparator.GreaterThanOrEqualTo, Value = 1f } },
+                Evaluators = { Need("Hunger", "Needs | Hunger", 1f, Curve.Logistic(10f, 0.5f)) },
+                Tree = Sequence(
+                    new WaitFixed { Duration = 1f },
+                    new ChangeConsideration { ConsiderationSetName = "Village", ConsiderationName = "Food", Amount = -1f },
+                    new SetConsideration { ConsiderationSetName = "Needs", ConsiderationName = "Hunger", NewValue = 0f }),
+            });
+            // Sleeps, locked in it until rested: nothing wakes it.
+            Repeat rest = new Repeat {
+                Child = Sequence(
+                    new WaitFixed { Duration = 0.5f },
+                    new ChangeConsideration { ConsiderationSetName = "Needs", ConsiderationName = "Energy", Amount = 0.1f }),
+            };
+            day.States.Add(new State {
+                Name = "Sleep",
+                Evaluators = { Need("Tired", "Needs | Energy", 1f, Curve.Linear(-1f, 1f)) },
+                Tree = new Parallel {
+                    Nodes = { rest, new LockStateConsideration { ConsiderationSetName = "Needs", ConsiderationName = "Energy", RequiredValue = 0.95f } },
+                },
+            });
+            // Harvests again and again while it is the best thing to do.
+            day.States.Add(new State {
+                Name = "Work", Weight = 0.6f, ExecutionFactor = 1.2f,
+                Evaluators = {
+                    Need("Rested", "Needs | Energy", 0.5f, Curve.Linear()),
+                    Need("Fed", "Needs | Hunger", 0.5f, Curve.Linear(-1f, 1f)),
+                },
+                Tree = new Repeat {
+                    Child = Sequence(
+                        new WaitFixed { Duration = 3f },
+                        new ChangeConsideration { ConsiderationSetName = "Village", ConsiderationName = "Food", Amount = 1f },
+                        new ChangeConsideration { ConsiderationSetName = "Needs", ConsiderationName = "Boredom", Amount = -0.1f }),
+                },
+            });
+            // Not every time it would: its fail chance passes it over three times in ten.
+            day.States.Add(new State {
+                Name = "Wander", Weight = 0.5f, ExecutionFactor = 1.5f, FailChance = 0.3f,
+                Evaluators = { Need("Bored", "Needs | Boredom", 1f, Curve.Linear()) },
+                Tree = Sequence(
+                    new WaitRandom { MinDuration = 1f, MaxDuration = 3f },
+                    new Remember { Text = "the hills" },
+                    new SetConsideration { ConsiderationSetName = "Needs", ConsiderationName = "Boredom", NewValue = 0f }),
+            });
             return design;
         }
 
-        private static UtilityAction Action(string name, float weight, params Consideration[] considerations) {
-            UtilityAction action = new UtilityAction { Name = name, Weight = weight };
-            action.Considerations.AddRange(considerations);
-            return action;
+        private static Evaluator Need(string name, string consideration, float weight, Curve curve) =>
+            new Evaluator { Name = name, Consideration = consideration, Weight = weight, Curve = curve };
+
+        private static Sequence Sequence(params Node[] nodes) {
+            Sequence sequence = new Sequence();
+            sequence.Nodes.AddRange(nodes);
+            return sequence;
         }
 
-        private static Consideration Need(string input, Curve curve, float min = 0f, float max = 1f) =>
-            new Consideration { Name = input, Input = input, Curve = curve, Min = min, Max = max };
-
-        public Villager(Reasoner design, ulong seed) {
-            Bindings<Villager, int> inputs = new Bindings<Villager, int>()
-                .Input("Hunger", (v, _) => v.Hunger)
-                .Input("Food", (v, _) => v.Food)
-                .Input("Tiredness", (v, _) => 1f - v.Energy)
-                .Input("Energy", (v, _) => v.Energy)
-                .Input("Boredom", (v, _) => v.Boredom);
-            _brain = design.Bind(inputs, seed);
-            _day = new Choose<Villager>(_brain,
-                new Sequence<Villager>(new Wait<Villager>(1.0), new Do<Villager>("Eat", (v, _) => v.Eat())),
-                new Do<Villager>("Sleep", (v, _) => v.Sleep()),
-                new Sequence<Villager>(new Wait<Villager>(3.0), new Do<Villager>("Harvest", (v, _) => v.Harvest())),
-                new Sequence<Villager>(new Wait<Villager>(2.0), new Do<Villager>("Look around", (v, _) => v.LookAround())));
+        public Villager(Design design, Globals village, ulong seed) {
+            Agent = new Agent(design, village, new Rng(seed), 0.0, this);
         }
 
-        public Brain<Villager, int> Brain => _brain;
-
-        // One step of its day: a tenth of an hour.
+        // One step of its day, a tenth of a second: evaluation and execution at v1's default rates.
         public void Tick(double now) {
-            Hunger = Math.Min(1f, Hunger + 0.01f);
-            Energy = Math.Max(0f, Energy - 0.008f);
-            Boredom = Math.Min(1f, Boredom + 0.006f);
-            string before = _brain.Current.Name;
-            _day.Tick(this, now);
-            if (_brain.Current.Name != before) {
-                Diary.Add($"{now:0.0} {_brain.Current.Name}");
+            Agent.Evaluate(now);
+            Agent.Execute(now);
+            if (Agent.ExecutingState != _doing) {
+                _doing = Agent.ExecutingState;
+                Diary.Add($"{now.ToString("0.0", CultureInfo.InvariantCulture)} {_doing?.Name ?? "Nothing"}");
             }
-        }
-
-        private Status Eat() {
-            Food--;
-            Hunger = 0f;
-            return Status.Success;
-        }
-
-        private Status Sleep() {
-            Energy = Math.Min(1f, Energy + 0.05f);
-            return Energy >= 1f ? Status.Success : Status.Running;
-        }
-
-        private Status Harvest() {
-            Food++;
-            Boredom = Math.Max(0f, Boredom - 0.1f);
-            return Status.Success;
-        }
-
-        private Status LookAround() {
-            Boredom = 0f;
-            return Status.Success;
         }
 
         // A day of ticks, the diary of what it chose.
         public static List<string> Live(ulong seed, int ticks = 2000) {
-            Villager villager = new Villager(Design(), seed);
+            Villager villager = new Villager(Design(), new Globals(), seed);
             for (int i = 0; i < ticks; i++) {
                 villager.Tick(i * 0.1);
             }

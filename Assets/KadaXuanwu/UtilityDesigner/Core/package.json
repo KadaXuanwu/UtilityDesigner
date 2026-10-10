@@ -2,7 +2,7 @@
   "name": "com.kadaxuanwu.utilitydesigner.core",
   "version": "2.0.0-preview.1",
   "displayName": "Utility Designer Core",
-  "description": "Utility Designer's engine-free core: response curves, utility scoring with commitment, behaviour trees, HTN planning, a shared task pool, versioned JSON designs with parameters and override layers, and a decision trace. Plain C#, ticked by the caller, deterministic for a seed.",
+  "description": "Utility Designer's engine-free core, deciding as v1 does: considerations, states scored by weighted evaluators, fail chance, state sets and v1's behaviour tree nodes, with versioned JSON designs, parameters and override layers, and a decision trace. Plain C#, ticked by the caller's clock, deterministic for a seed.",
   "unity": "2022.3",
   "author": { "name": "KadaXuanwu" }
 }

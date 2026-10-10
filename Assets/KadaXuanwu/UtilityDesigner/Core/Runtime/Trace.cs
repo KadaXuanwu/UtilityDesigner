@@ -4,22 +4,23 @@ using System.IO;
 using System.Text;
 
 namespace KadaXuanwu.UtilityDesigner.Core {
-    // The last Capacity decisions of a brain, every option it scored and what it chose, so "why did it do that" has an
-    // answer after the fact. Off (null) costs nothing; on, it keeps strings of the targets.
+    // The last Capacity evaluations of an agent, every state's score and what runs after it, so "why did it do that" has
+    // an answer after the fact. Off (null) costs nothing.
     public sealed class Trace {
         public struct Option {
-            public string Action;
-            public string Target;
+            public string State;
             public float Score;
-            public int Rank;
+            // Whether it could be chosen: active, its preconditions met, its score not below 0.
+            public bool Available;
         }
 
         public sealed class Entry {
             public double Time;
-            public string Brain;
-            public string Chosen;
-            public string ChosenTarget;
-            public float ChosenScore;
+            public string Agent;
+            public string StateSet;
+            // The state running after the evaluation, empty for none.
+            public string Executing;
+            public bool Locked;
             public readonly List<Option> Options = new List<Option>();
         }
 
@@ -38,18 +39,18 @@ namespace KadaXuanwu.UtilityDesigner.Core {
         // The i-th oldest entry kept.
         public Entry this[int i] => _entries[(_next - Count + i + _entries.Length) % _entries.Length];
 
-        public void Record<TTarget>(double time, string brain, List<Choice<TTarget>> options, Choice<TTarget> chosen) {
+        internal void Record(double time, Agent agent, StateSet evaluated) {
             Entry entry = _entries[_next];
             _next = (_next + 1) % _entries.Length;
             Count = System.Math.Min(Count + 1, _entries.Length);
             entry.Time = time;
-            entry.Brain = brain;
-            entry.Chosen = chosen.Valid ? chosen.Name : "";
-            entry.ChosenTarget = chosen.Valid ? chosen.Target?.ToString() ?? "" : "";
-            entry.ChosenScore = chosen.Score;
+            entry.Agent = agent.Design.Name;
+            entry.StateSet = evaluated.Name;
+            entry.Executing = agent.ExecutingState?.Name ?? "";
+            entry.Locked = agent.StateLocked;
             entry.Options.Clear();
-            foreach (Choice<TTarget> option in options) {
-                entry.Options.Add(new Option { Action = option.Name, Target = option.Target?.ToString() ?? "", Score = option.Score, Rank = option.Rank });
+            foreach (State state in evaluated.States) {
+                entry.Options.Add(new Option { State = state.Name, Score = state.LastScore, Available = state.LastAvailable });
             }
         }
 
@@ -59,17 +60,16 @@ namespace KadaXuanwu.UtilityDesigner.Core {
                 Entry entry = this[i];
                 StringBuilder line = new StringBuilder();
                 line.Append("{\"time\":").Append(entry.Time.ToString(CultureInfo.InvariantCulture));
-                line.Append(",\"brain\":").Append(Json.Quote(entry.Brain));
-                line.Append(",\"chosen\":").Append(Json.Quote(entry.Chosen));
-                line.Append(",\"target\":").Append(Json.Quote(entry.ChosenTarget));
-                line.Append(",\"score\":").Append(entry.ChosenScore.ToString(CultureInfo.InvariantCulture));
+                line.Append(",\"agent\":").Append(Json.Quote(entry.Agent));
+                line.Append(",\"stateSet\":").Append(Json.Quote(entry.StateSet));
+                line.Append(",\"executing\":").Append(Json.Quote(entry.Executing));
+                line.Append(",\"locked\":").Append(entry.Locked ? "true" : "false");
                 line.Append(",\"options\":[");
                 for (int o = 0; o < entry.Options.Count; o++) {
                     Option option = entry.Options[o];
-                    line.Append(o > 0 ? "," : "").Append("{\"action\":").Append(Json.Quote(option.Action));
-                    line.Append(",\"target\":").Append(Json.Quote(option.Target));
+                    line.Append(o > 0 ? "," : "").Append("{\"state\":").Append(Json.Quote(option.State));
                     line.Append(",\"score\":").Append(option.Score.ToString(CultureInfo.InvariantCulture));
-                    line.Append(",\"rank\":").Append(option.Rank).Append('}');
+                    line.Append(",\"available\":").Append(option.Available ? "true" : "false").Append('}');
                 }
                 writer.WriteLine(line.Append("]}").ToString());
             }
