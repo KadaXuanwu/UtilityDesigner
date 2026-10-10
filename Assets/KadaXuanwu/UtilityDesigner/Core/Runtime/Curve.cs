@@ -14,7 +14,7 @@ namespace KadaXuanwu.UtilityDesigner.Core {
         Sine,
         // y = k from c on, b below it
         Step,
-        // Through keyframes, Hermite between them (Unity's AnimationCurve, unweighted)
+        // Through keyframes, Hermite between them: v1's AnimationCurve (unweighted tangents, an infinite one a step)
         Keys,
     }
 
@@ -33,8 +33,9 @@ namespace KadaXuanwu.UtilityDesigner.Core {
         }
     }
 
-    // A response curve: an input already normalized to 0..1 in, a utility 0..1 out. The shapes take four numbers an
-    // optimizer can move (M, K, B, C, Parameters); Keys curves are drawn by hand.
+    // A response curve: an input already normalized to 0..1 in, a score out. Keys curves are v1's, drawn by hand, and
+    // give whatever their keys say, as AnimationCurve does. The other shapes take four numbers an optimizer can move
+    // (M, K, B, C, Parameters) and stay within 0..1.
     public sealed class Curve {
         public CurveShape Shape;
         public float M = 1f;
@@ -56,6 +57,9 @@ namespace KadaXuanwu.UtilityDesigner.Core {
         public static Curve Through(params CurveKey[] keys) => new Curve { Shape = CurveShape.Keys, Keys = keys };
 
         public float Evaluate(float x) {
+            if (Shape == CurveShape.Keys) {
+                return Hermite(x);
+            }
             x = Clamp01(x);
             float y;
             switch (Shape) {
@@ -78,11 +82,8 @@ namespace KadaXuanwu.UtilityDesigner.Core {
                 case CurveShape.Sine:
                     y = K * MathF.Sin(M * MathF.PI * (x - C)) + B;
                     break;
-                case CurveShape.Step:
-                    y = x >= C ? K : B;
-                    break;
                 default:
-                    y = Hermite(x);
+                    y = x >= C ? K : B;
                     break;
             }
             return float.IsNaN(y) ? 0f : Clamp01(y);
@@ -103,8 +104,11 @@ namespace KadaXuanwu.UtilityDesigner.Core {
                 CurveKey a = keys[i - 1];
                 CurveKey b = keys[i];
                 float span = b.Time - a.Time;
-                if (span <= 0f) {
+                if (span <= 0f || x == b.Time) {
                     return b.Value;
+                }
+                if (float.IsInfinity(a.OutTangent) || float.IsInfinity(b.InTangent)) {
+                    return a.Value;
                 }
                 float t = (x - a.Time) / span;
                 float t2 = t * t;
