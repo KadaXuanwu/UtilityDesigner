@@ -13,22 +13,18 @@ MonoBehaviour:
   m_Name: UD Environment
   m_EditorClassIdentifier: 
   considerations:
-  - designation: Deer nearby
-    type: 0
-    initialValue: 1
-    setMinValue: 0
-    minValue: 0
-    setMaxValue: 0
-    maxValue: 0
-    changePerSecond: 0
-    useRealTime: 0
-  - designation: Bears nearby
-    type: 0
-    initialValue: 0
-    setMinValue: 0
-    minValue: 0
-    setMaxValue: 0
-    maxValue: 0
-    changePerSecond: 0
-    useRealTime: 0
+  - Name: Deer nearby
+    InitialValue: 1
+    SetMinValue: 0
+    MinValue: 0
+    SetMaxValue: 0
+    MaxValue: 0
+    ChangePerSecond: 0
+  - Name: Bears nearby
+    InitialValue: 0
+    SetMinValue: 0
+    MinValue: 0
+    SetMaxValue: 0
+    MaxValue: 0
+    ChangePerSecond: 0
   local: 0

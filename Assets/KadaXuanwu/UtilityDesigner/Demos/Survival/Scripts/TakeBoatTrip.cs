@@ -1,6 +1,7 @@
-using KadaXuanwu.UtilityDesigner.Scripts.Execution.Runtime;
+using KadaXuanwu.UtilityDesigner.Core;
 using UnityEngine;
 using UnityEngine.AI;
+using Designer = KadaXuanwu.UtilityDesigner.Runtime.UtilityDesigner;
 
 namespace KadaXuanwu.UtilityDesigner.Demos.Survival.Scripts
 {
@@ -17,14 +18,15 @@ namespace KadaXuanwu.UtilityDesigner.Demos.Survival.Scripts
         protected override void OnAwake()
         {
             _referenceMissing = false;
-            if (SceneRefs == null || ThisGameObject == null)
+            Designer designer = Designer.Of(Agent);
+            if (designer == null || designer.SceneReferences == null)
             {
                 _referenceMissing = true;
                 return;
             }
 
-            _james = ThisGameObject.GetComponent<Transform>().gameObject;
-            _boat = SceneRefs.GetRef<Transform>("Boat").gameObject;
+            _james = designer.GetComponent<Transform>().gameObject;
+            _boat = designer.SceneReferences.GetRef<Transform>("Boat").gameObject;
             _boatPath = _boat.GetComponent<FollowPath>();
             
             if (_james == null || _boat == null || _boatPath == null)

@@ -856,7 +856,47 @@ namespace KadaXuanwu.UtilityDesigner.Tests {
         }
     }
 
+    // As an engine's vector and bounds are: public fields, and private ones.
+    public struct Point {
+        public float x;
+        public float y;
+    }
+
+    public struct Box {
+        private Point m_Center;
+        private int m_Size;
+
+        public Box(Point center, int size) {
+            m_Center = center;
+            m_Size = size;
+        }
+
+        public Point Center => m_Center;
+        public int Size => m_Size;
+    }
+
+    public sealed class GoTo : ActionNode {
+        public Point Target;
+        public Box Area;
+
+        protected override NodeState OnUpdate() => NodeState.Success;
+    }
+
     public sealed class DesignTests {
+        [Test]
+        public void ANodesStructOfNumbersIsSavedByItsFields() {
+            NodeTypes.Register(typeof(GoTo));
+            Bench bench = new Bench();
+            bench.Set.States.Add(new State { Name = "Go", Tree = new GoTo { Target = new Point { x = 1.5f, y = -2f }, Area = new Box(new Point { x = 3f }, 4) } });
+            string json = Designs.ToJson(bench.Design);
+            Assert.That(json, Does.Contain("\"target\""));
+            GoTo back = (GoTo)Designs.FromJson(json).StateSets[0].States[0].Tree;
+            Assert.That(back.Target.x, Is.EqualTo(1.5f));
+            Assert.That(back.Target.y, Is.EqualTo(-2f));
+            Assert.That(back.Area.Center.x, Is.EqualTo(3f));
+            Assert.That(back.Area.Size, Is.EqualTo(4));
+        }
+
         [Test]
         public void ADesignSurvivesJson() {
             string json = Designs.ToJson(Villager.Design());

@@ -1,6 +1,6 @@
-using KadaXuanwu.UtilityDesigner.Scripts.Evaluation;
-using KadaXuanwu.UtilityDesigner.Scripts.Execution.Runtime;
+using KadaXuanwu.UtilityDesigner.Core;
 using UnityEngine;
+using Designer = KadaXuanwu.UtilityDesigner.Runtime.UtilityDesigner;
 
 namespace KadaXuanwu.UtilityDesigner.Demos.Survival.Scripts
 {
@@ -8,31 +8,23 @@ namespace KadaXuanwu.UtilityDesigner.Demos.Survival.Scripts
     {
         public int foodReward;
         
-        private ConsiderationSet _jamesConsiderations;
-        private ConsiderationSet _environmentConsiderations;
         private bool _referenceMissing;
         private GameObject _deer;
 
 
-        protected override void RegisterSerializedVariables()
-        {
-            AddVariable(nameof(foodReward), foodReward);
-        }
-
         protected override void OnAwake()
         {
             _referenceMissing = false;
-            if (SceneRefs == null)
+            Designer designer = Designer.Of(Agent);
+            if (designer == null || designer.SceneReferences == null)
             {
                 _referenceMissing = true;
                 return;
             }
 
-            _jamesConsiderations = GetConsiderationSet("UD James");
-            _environmentConsiderations = GetConsiderationSet("UD Environment");
-            _deer = SceneRefs.GetRef<Transform>("Deer").gameObject;
+            _deer = designer.SceneReferences.GetRef<Transform>("Deer").gameObject;
 
-            if (_jamesConsiderations == null || _environmentConsiderations == null || _deer == null)
+            if (_deer == null)
                 _referenceMissing = true;
         }
 
@@ -41,18 +33,18 @@ namespace KadaXuanwu.UtilityDesigner.Demos.Survival.Scripts
             if (_referenceMissing)
                 return NodeState.Failure;
 
-            if (Random.Range(0, 250) > _jamesConsiderations.GetConsideration("Energy", UtilityDesigner) +
-                _jamesConsiderations.GetConsideration("Strength", UtilityDesigner))
+            if (Random.Range(0, 250) > Agent.GetConsideration("UD James", "Energy") +
+                Agent.GetConsideration("UD James", "Strength"))
             {
                 _deer.SendMessage("RealizeDanger", SendMessageOptions.DontRequireReceiver);
-                _environmentConsiderations.SetConsideration("Deer nearby", 0);
+                Agent.SetConsideration("UD Environment", "Deer nearby", 0);
 
                 return NodeState.Failure;
             }
 
-            _jamesConsiderations.ChangeConsideration("Food", foodReward, UtilityDesigner);
+            Agent.ChangeConsideration("UD James", "Food", foodReward);
             _deer.SendMessage("Die", SendMessageOptions.DontRequireReceiver);
-            _environmentConsiderations.SetConsideration("Deer nearby", 0);
+            Agent.SetConsideration("UD Environment", "Deer nearby", 0);
 
             return NodeState.Success;
         }

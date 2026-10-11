@@ -1,0 +1,322 @@
+{
+  "format": 2,
+  "name": "Agent Behaviour",
+  "considerationSets": [
+    {
+      "name": "UD Agent",
+      "local": true,
+      "considerations": [
+        {
+          "name": "Money",
+          "initial": 0,
+          "changePerSecond": 0
+        },
+        {
+          "name": "Hunger",
+          "initial": 0,
+          "min": 0,
+          "max": 1E+02,
+          "changePerSecond": 3
+        },
+        {
+          "name": "Energy",
+          "initial": 8E+01,
+          "min": 0,
+          "max": 1E+02,
+          "changePerSecond": -3
+        }
+      ]
+    }
+  ],
+  "stateSets": [
+    {
+      "name": "State Set 1",
+      "states": [
+        {
+          "name": "Work",
+          "active": true,
+          "weight": 1,
+          "executionFactor": 1.2,
+          "baseScore": 0.15,
+          "failChance": 0,
+          "notes": "Gets money over time. Can't work when too tired.",
+          "preconditions": [
+            {
+              "name": "Precondition 1",
+              "consideration": "UD Agent | Energy",
+              "comparator": "GreaterThan",
+              "value": 2E+01
+            }
+          ],
+          "evaluators": [
+            {
+              "name": "Evaluator 1",
+              "consideration": "UD Agent | Money",
+              "weight": 1,
+              "min": 0,
+              "max": 1E+03,
+              "curve": {
+                "shape": "Keys",
+                "keys": [
+                  [
+                    0,
+                    1,
+                    -3.1421325,
+                    -3.1421325
+                  ],
+                  [
+                    0.2050143,
+                    0.35581794,
+                    -1.2375518,
+                    -1.2375518
+                  ],
+                  [
+                    1,
+                    0,
+                    -0.20724852,
+                    -0.20724852
+                  ]
+                ]
+              }
+            }
+          ],
+          "tree": {
+            "type": "Repeat",
+            "id": "f5e6378a9675cfd498b33e33fb40058f",
+            "x": 375,
+            "y": 82,
+            "child": {
+              "type": "Sequence",
+              "id": "947ec78a1118b724e872bf21d04b606d",
+              "x": 375,
+              "y": 1.7E+02,
+              "children": [
+                {
+                  "type": "MoveToTransform",
+                  "id": "d76846bbfdaa3954d9af93f96c251d84",
+                  "x": 215,
+                  "y": 293,
+                  "locationIndex": 0,
+                  "setSpeed": false,
+                  "speed": 0,
+                  "setStoppingDistance": false,
+                  "stoppingDistance": 0
+                },
+                {
+                  "type": "WaitFixed",
+                  "id": "d178258a8d0a0c64b9ba77049818d8e3",
+                  "x": 375,
+                  "y": 293,
+                  "duration": 0.1
+                },
+                {
+                  "type": "ChangeConsideration",
+                  "id": "e67482ac9721b5d4fac3c17e6c9f1345",
+                  "x": 525,
+                  "y": 293,
+                  "considerationSetName": "UD Agent",
+                  "considerationName": "Money",
+                  "amount": 1.5
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Eat",
+          "active": true,
+          "weight": 1.5,
+          "executionFactor": 1.2,
+          "baseScore": 0,
+          "failChance": 0,
+          "notes": "The agent spends some money to buy food.",
+          "preconditions": [
+            {
+              "name": "Precondition 1",
+              "consideration": "UD Agent | Money",
+              "comparator": "GreaterThan",
+              "value": 25
+            }
+          ],
+          "evaluators": [
+            {
+              "name": "Evaluator 1",
+              "consideration": "UD Agent | Hunger",
+              "weight": 1,
+              "min": 0,
+              "max": 1E+02,
+              "curve": {
+                "shape": "Keys",
+                "keys": [
+                  [
+                    0,
+                    0,
+                    1,
+                    1
+                  ],
+                  [
+                    1,
+                    1,
+                    1,
+                    1
+                  ]
+                ]
+              }
+            },
+            {
+              "name": "Evaluator 2",
+              "consideration": "UD Agent | Money",
+              "weight": 0.5,
+              "min": 0,
+              "max": 1E+03,
+              "curve": {
+                "shape": "Keys",
+                "keys": [
+                  [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  [
+                    1,
+                    1,
+                    2,
+                    2
+                  ]
+                ]
+              }
+            }
+          ],
+          "tree": {
+            "type": "Repeat",
+            "id": "f5e6378a9675cfd498b33e33fb40058f",
+            "x": 375,
+            "y": 82,
+            "child": {
+              "type": "Sequence",
+              "id": "947ec78a1118b724e872bf21d04b606d",
+              "x": 375,
+              "y": 1.7E+02,
+              "children": [
+                {
+                  "type": "MoveToTransform",
+                  "id": "d76846bbfdaa3954d9af93f96c251d84",
+                  "x": 215,
+                  "y": 293,
+                  "locationIndex": 1,
+                  "setSpeed": false,
+                  "speed": 0,
+                  "setStoppingDistance": false,
+                  "stoppingDistance": 0
+                },
+                {
+                  "type": "WaitFixed",
+                  "id": "d178258a8d0a0c64b9ba77049818d8e3",
+                  "x": 375,
+                  "y": 293,
+                  "duration": 1
+                },
+                {
+                  "type": "ChangeConsideration",
+                  "id": "e67482ac9721b5d4fac3c17e6c9f1345",
+                  "x": 525,
+                  "y": 293,
+                  "considerationSetName": "UD Agent",
+                  "considerationName": "Money",
+                  "amount": -25
+                },
+                {
+                  "type": "ChangeConsideration",
+                  "id": "7751df13b1df96740bf528a5e83acd64",
+                  "x": 705,
+                  "y": 293,
+                  "considerationSetName": "UD Agent",
+                  "considerationName": "Hunger",
+                  "amount": -25
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Sleep",
+          "active": true,
+          "weight": 1.2,
+          "executionFactor": 2,
+          "baseScore": 0.1,
+          "failChance": 0,
+          "notes": "Gets energy over time.",
+          "preconditions": [],
+          "evaluators": [
+            {
+              "name": "Evaluator 1",
+              "consideration": "UD Agent | Energy",
+              "weight": 1,
+              "min": 0,
+              "max": 1E+02,
+              "curve": {
+                "shape": "Keys",
+                "keys": [
+                  [
+                    0,
+                    1,
+                    -1,
+                    -1
+                  ],
+                  [
+                    1,
+                    0,
+                    -1,
+                    -1
+                  ]
+                ]
+              }
+            }
+          ],
+          "tree": {
+            "type": "Repeat",
+            "id": "f5e6378a9675cfd498b33e33fb40058f",
+            "x": 375,
+            "y": 82,
+            "child": {
+              "type": "Sequence",
+              "id": "947ec78a1118b724e872bf21d04b606d",
+              "x": 375,
+              "y": 1.7E+02,
+              "children": [
+                {
+                  "type": "MoveToTransform",
+                  "id": "d76846bbfdaa3954d9af93f96c251d84",
+                  "x": 215,
+                  "y": 293,
+                  "locationIndex": 2,
+                  "setSpeed": false,
+                  "speed": 0,
+                  "setStoppingDistance": false,
+                  "stoppingDistance": 0
+                },
+                {
+                  "type": "WaitFixed",
+                  "id": "d178258a8d0a0c64b9ba77049818d8e3",
+                  "x": 375,
+                  "y": 293,
+                  "duration": 0.1
+                },
+                {
+                  "type": "ChangeConsideration",
+                  "id": "e67482ac9721b5d4fac3c17e6c9f1345",
+                  "x": 525,
+                  "y": 293,
+                  "considerationSetName": "UD Agent",
+                  "considerationName": "Energy",
+                  "amount": 2
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

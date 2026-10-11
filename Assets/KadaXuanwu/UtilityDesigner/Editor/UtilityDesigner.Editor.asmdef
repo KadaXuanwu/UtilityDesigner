@@ -1,0 +1,11 @@
+{
+    "name": "UtilityDesigner.Editor",
+    "rootNamespace": "KadaXuanwu.UtilityDesigner.Editor",
+    "references": [
+        "KadaXuanwu.UtilityDesigner.Core",
+        "UtilityDesigner"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ]
+}

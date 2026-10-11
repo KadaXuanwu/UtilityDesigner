@@ -1,6 +1,7 @@
-using KadaXuanwu.UtilityDesigner.Scripts.Execution.Runtime;
+using KadaXuanwu.UtilityDesigner.Core;
 using UnityEngine;
 using UnityEngine.AI;
+using Designer = KadaXuanwu.UtilityDesigner.Runtime.UtilityDesigner;
 
 namespace KadaXuanwu.UtilityDesigner.Demos.Survival.Scripts
 {
@@ -16,15 +17,16 @@ namespace KadaXuanwu.UtilityDesigner.Demos.Survival.Scripts
         protected override void OnAwake()
         {
             _referenceMissing = false;
-            if (SceneRefs == null || ThisGameObject == null)
+            Designer designer = Designer.Of(Agent);
+            if (designer == null || designer.SceneReferences == null)
             {
                 _referenceMissing = true;
                 return;
             }
 
-            _navMeshAgentJames = ThisGameObject.GetComponent<NavMeshAgent>();
-            _transformJames = ThisGameObject.GetComponent<Transform>();
-            _transformHome = SceneRefs.GetRef<Transform>("Home");
+            _navMeshAgentJames = designer.GetComponent<NavMeshAgent>();
+            _transformJames = designer.GetComponent<Transform>();
+            _transformHome = designer.SceneReferences.GetRef<Transform>("Home");
 
             if (_transformJames == null || _navMeshAgentJames == null || _transformHome == null)
                 _referenceMissing = true;

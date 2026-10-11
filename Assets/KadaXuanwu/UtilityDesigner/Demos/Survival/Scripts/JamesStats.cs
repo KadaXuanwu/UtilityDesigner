@@ -1,5 +1,5 @@
+using KadaXuanwu.UtilityDesigner.Runtime;
 using System.Collections;
-using KadaXuanwu.UtilityDesigner.Scripts.Evaluation;
 using TMPro;
 using UnityEngine;
 
@@ -7,7 +7,7 @@ namespace KadaXuanwu.UtilityDesigner.Demos.Survival.Scripts
 {
     public class JamesStats : MonoBehaviour
     {
-        [SerializeField] private ConsiderationSet jamesConsiderations;
+        [SerializeField] private ConsiderationSetAsset jamesConsiderations;
         [SerializeField] private GameObject uiCanvas;
         [SerializeField] private TextMeshProUGUI textHunger;
         [SerializeField] private TextMeshProUGUI textEnergy;

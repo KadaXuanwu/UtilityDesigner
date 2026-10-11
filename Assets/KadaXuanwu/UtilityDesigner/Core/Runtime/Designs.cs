@@ -62,6 +62,13 @@ namespace KadaXuanwu.UtilityDesigner.Core {
             Names[typeof(T)] = name;
         }
 
+        // For the types found by reflection (the Unity layer registers every node type it finds).
+        public static void Register(Type type, string name = null) {
+            name = name ?? type.Name;
+            Makers[name] = () => (Node)Activator.CreateInstance(type);
+            Names[type] = name;
+        }
+
         public static Node Create(string name) {
             if (!Makers.TryGetValue(name, out Func<Node> make)) {
                 throw new FormatException($"A node of type \"{name}\", which is not registered (NodeTypes.Register).");
@@ -76,7 +83,8 @@ namespace KadaXuanwu.UtilityDesigner.Core {
             return name;
         }
 
-        // The node type's settings: its own public fields of a number, a boolean, text or an enum.
+        // The node type's settings: its own public fields of a number, a boolean, text, an enum, or a struct of numbers
+        // (an engine's vector or colour).
         public static FieldInfo[] SettingsOf(Node node) {
             Type type = node.GetType();
             if (!Settings.TryGetValue(type, out FieldInfo[] fields)) {
@@ -84,8 +92,7 @@ namespace KadaXuanwu.UtilityDesigner.Core {
                 foreach (FieldInfo field in type.GetFields(BindingFlags.Public | BindingFlags.Instance)) {
                     Type declared = field.DeclaringType;
                     Type of = field.FieldType;
-                    bool saved = of == typeof(float) || of == typeof(double) || of == typeof(int) || of == typeof(bool)
-                        || of == typeof(string) || of.IsEnum;
+                    bool saved = IsNumber(of) || of == typeof(string) || of.IsEnum || IsNumbers(of);
                     if (saved && !field.IsInitOnly && declared != typeof(Node) && declared != typeof(CompositeNode) && declared != typeof(DecoratorNode)) {
                         found.Add(field);
                     }
@@ -94,6 +101,24 @@ namespace KadaXuanwu.UtilityDesigner.Core {
             }
             return fields;
         }
+
+        private static bool IsNumber(Type of) => of == typeof(float) || of == typeof(double) || of == typeof(int) || of == typeof(bool);
+
+        // A struct whose fields, private ones too, are all numbers or such structs.
+        internal static bool IsNumbers(Type of) {
+            if (!of.IsValueType || of.IsPrimitive || of.IsEnum) {
+                return false;
+            }
+            FieldInfo[] fields = StructFields(of);
+            foreach (FieldInfo field in fields) {
+                if (!IsNumber(field.FieldType) && !IsNumbers(field.FieldType)) {
+                    return false;
+                }
+            }
+            return fields.Length > 0;
+        }
+
+        internal static FieldInfo[] StructFields(Type of) => of.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
     }
 
     // Designs as versioned JSON, their tunable numbers, and override layers: a small JSON of changed ids laid over a base
@@ -351,8 +376,7 @@ namespace KadaXuanwu.UtilityDesigner.Core {
                 map["y"] = node.Y;
             }
             foreach (FieldInfo field in NodeTypes.SettingsOf(node)) {
-                object value = field.GetValue(node);
-                map[Key(field)] = field.FieldType.IsEnum ? value.ToString() : value;
+                map[Key(field)] = Saved(field.GetValue(node), field.FieldType);
             }
             if (node is DecoratorNode decorator) {
                 if (decorator.Child != null) {
@@ -378,8 +402,7 @@ namespace KadaXuanwu.UtilityDesigner.Core {
                 if (!map.TryGetValue(Key(field), out object value) || value == null) {
                     continue;
                 }
-                Type of = field.FieldType;
-                field.SetValue(node, of.IsEnum ? Enum.Parse(of, (string)value) : value is double number ? Convert.ChangeType(number, of) : value);
+                field.SetValue(node, Loaded(value, field.FieldType, field.GetValue(node)));
             }
             if (node is DecoratorNode decorator) {
                 if (map.TryGetValue("child", out object child) && child != null) {
@@ -391,6 +414,39 @@ namespace KadaXuanwu.UtilityDesigner.Core {
                 }
             }
             return node;
+        }
+
+        // A setting as JSON has it: an enum by name, a struct of numbers as an object of its fields.
+        private static object Saved(object value, Type of) {
+            if (of.IsEnum) {
+                return value.ToString();
+            }
+            if (!NodeTypes.IsNumbers(of)) {
+                return value;
+            }
+            Dictionary<string, object> map = new Dictionary<string, object>();
+            foreach (FieldInfo field in NodeTypes.StructFields(of)) {
+                map[field.Name] = Saved(field.GetValue(value), field.FieldType);
+            }
+            return map;
+        }
+
+        private static object Loaded(object json, Type of, object current) {
+            if (of.IsEnum) {
+                return Enum.Parse(of, (string)json);
+            }
+            if (json is double number) {
+                return Convert.ChangeType(number, of);
+            }
+            if (json is Dictionary<string, object> map && NodeTypes.IsNumbers(of)) {
+                foreach (FieldInfo field in NodeTypes.StructFields(of)) {
+                    if (map.TryGetValue(field.Name, out object value) && value != null) {
+                        field.SetValue(current, Loaded(value, field.FieldType, field.GetValue(current)));
+                    }
+                }
+                return current;
+            }
+            return json;
         }
 
         // A setting's key: its field's name, the first letter small.
