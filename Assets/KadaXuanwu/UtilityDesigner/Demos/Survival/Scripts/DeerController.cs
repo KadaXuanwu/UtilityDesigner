@@ -1,5 +1,5 @@
+using KadaXuanwu.UtilityDesigner.Runtime;
 using System.Collections;
-using KadaXuanwu.UtilityDesigner.Scripts.Evaluation;
 using UnityEngine;
 using UnityEngine.AI;
 using Random = UnityEngine.Random;
@@ -9,7 +9,7 @@ namespace KadaXuanwu.UtilityDesigner.Demos.Survival.Scripts
     public class DeerController : MonoBehaviour
     {
         [SerializeField] private Transform fleeLocation;
-        [SerializeField] private ConsiderationSet environmentConsiderations;
+        [SerializeField] private ConsiderationSetAsset environmentConsiderations;
         [SerializeField] private GameObject particleDeath;
         [SerializeField] private GameObject mesh;
         

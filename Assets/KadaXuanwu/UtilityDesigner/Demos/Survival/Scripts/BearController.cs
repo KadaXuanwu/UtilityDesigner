@@ -1,5 +1,5 @@
+using KadaXuanwu.UtilityDesigner.Runtime;
 using System.Collections;
-using KadaXuanwu.UtilityDesigner.Scripts.Evaluation;
 using UnityEngine;
 using UnityEngine.AI;
 using Random = UnityEngine.Random;
@@ -10,7 +10,7 @@ namespace KadaXuanwu.UtilityDesigner.Demos.Survival.Scripts
     {
         [SerializeField] private Transform fleeLocation;
         [SerializeField] private Transform jamesTransform;
-        [SerializeField] private ConsiderationSet environmentConsiderations;
+        [SerializeField] private ConsiderationSetAsset environmentConsiderations;
         [SerializeField] private GameObject mesh;
         
         private const float MinRespawnTime = 35f;

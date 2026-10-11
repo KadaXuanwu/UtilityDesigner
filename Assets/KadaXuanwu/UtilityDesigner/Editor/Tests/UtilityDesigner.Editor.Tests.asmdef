@@ -1,0 +1,22 @@
+{
+    "name": "UtilityDesigner.Editor.Tests",
+    "rootNamespace": "KadaXuanwu.UtilityDesigner.Editor.Tests",
+    "references": [
+        "KadaXuanwu.UtilityDesigner.Core",
+        "UtilityDesigner",
+        "UtilityDesigner.Editor",
+        "UnityEngine.TestRunner",
+        "UnityEditor.TestRunner"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ]
+}

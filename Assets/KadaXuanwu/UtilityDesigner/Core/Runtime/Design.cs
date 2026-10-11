@@ -34,7 +34,8 @@ namespace KadaXuanwu.UtilityDesigner.Core {
     }
 
     // A number an agent decides by: set by the game or by nodes, kept within its limits when they are set, and changing
-    // by itself each second of the caller's clock.
+    // by itself each second of the caller's clock. Serializable, so an engine can keep it in its own assets.
+    [Serializable]
     public sealed class Consideration {
         public string Name = "";
         public float InitialValue;

@@ -29,3 +29,6 @@ agent.Execute(now);
 ```
 
 `Samples~/HeadlessVillager` is an agent in a plain C# loop. Tests: `dotnet test` in `Tests~`.
+
+In Unity, `Runtime` and `Editor` beside this package are the layer on top: the `UtilityDesigner` component ticks an
+`Agent` on game time, and the Utility Designer window edits the designs.

@@ -4,10 +4,11 @@ Utility Designer 2.0's gate: every feature, node and editor window of v1 (`Asset
 the thesis in `Doku/chapters`), and where 2.0 has it.
 
 - **Core**: in this package, deciding as v1 does, with a test in `Tests~/CoreTests.cs`.
-- **Unity layer**: needs UnityEngine or the editor; the next ticket.
+- **Unity layer**: needs UnityEngine or the editor: `Runtime` (the component, the Unity nodes) and `Editor` (the
+  windows) beside this package.
 - **Plumbing**: how it is referenced, stored, serialised or run. Free to differ from v1; the Change column says how.
 
-2.0 ships when every Unity layer row is done. v1's logic is not changed anywhere; what looks wrong in it is listed at
+Every Unity layer row is done, and v1 is deleted. v1's logic is not changed anywhere; what looks wrong in it is listed at
 the end, for discussion.
 
 ## Scoring and choosing
@@ -45,7 +46,7 @@ the end, for discussion.
 | Reached by name each tick (`"Set \| Name"`, set name and consideration name in nodes) | Plumbing | Bound once to a slot index when the agent starts (`Agent.Bind`) |
 | Consideration type (only Float) | Plumbing | Dropped: every consideration is a float |
 | Use Real Time, on considerations and the time nodes | Plumbing | Dropped: the caller's clock is the only one (game time in Unity) |
-| Consideration sets as ScriptableObject assets, with a create menu | Unity layer | |
+| Consideration sets as ScriptableObject assets, with a create menu | Unity layer | `ConsiderationSetAsset`, the same menu. A behaviour's JSON carries its own copy of each set, which the editor keeps the same as the asset of its name. Game code reads and writes the running values through the asset (`GetConsideration`, `SetConsideration`, `ChangeConsideration`) as in v1 |
 
 ## Nodes
 
@@ -72,16 +73,16 @@ the end or when terminated; a composite or decorator terminates its children fir
 | Set Consideration, Change Consideration | Core | `SetConsiderationAndChangeConsideration` |
 | Compare Consideration | Core | `CompareConsiderationComparesTheValueTwo`, `CompareConsiderationWithoutItsConsideration` |
 | Time Check | Core | `TimeCheckComparesTheCallersClock` |
-| Move To Position, Move To Transform | Unity layer | NavMeshAgent |
-| Compare Distance | Unity layer | Transforms |
-| Debug Log, Debug Breakpoint | Unity layer | `Debug` |
+| Move To Position, Move To Transform | Unity layer | `Runtime/Nodes.cs`, on the GameObject's NavMeshAgent. Where v1 throws without one, they fail |
+| Compare Distance | Unity layer | `Runtime/Nodes.cs`, two Transforms of the SceneReferences |
+| Debug Log, Debug Breakpoint | Unity layer | `Runtime/Nodes.cs` |
 | Custom nodes: subclass `ActionNode`, `ConditionalNode`, `CompositeNode`, `DecoratorNode` | Core | `NodeTypes.Register`; the sample's `Remember` |
-| A node reaches its `UtilityDesigner` and `ThisGameObject` | Plumbing | `Node.Agent`, and `Agent.Owner` for whatever the game passes |
-| `SceneRefs` (scene object lists picked by index in dropdowns) | Unity layer | |
-| `[CategoryPath]` for a custom node's place in the menu | Unity layer | |
+| A node reaches its `UtilityDesigner` and `ThisGameObject` | Plumbing | `Node.Agent`, and `Agent.Owner` for whatever the game passes; in Unity `UtilityDesigner.Of(Agent)` is the component |
+| `SceneRefs` (scene object lists picked by index in dropdowns) | Unity layer | `SceneReferences`, `TransformReferences`; a node's int field marked `[SceneRef(type, label)]` is shown as the dropdown |
+| `[CategoryPath]` for a custom node's place in the menu | Unity layer | The same attribute. Every node class is registered under its class name (`Nodes.Register`) |
 | Node description, shown in the inspector | Core | `Node.Description`, v1's texts |
 | Node guid, notes, graph position | Plumbing | `Node.Id`, `Notes`, `X`, `Y`, saved |
-| Node fields serialised by Unity; `RegisterSerializedVariables`, `RegisterDropdowns` | Plumbing | A node type's public fields are its settings, saved by name; how the editor shows them is the Unity layer's |
+| Node fields serialised by Unity; `RegisterSerializedVariables`, `RegisterDropdowns` | Plumbing | A node type's public fields are its settings, saved by name: numbers, booleans, text, enums, and structs of numbers (`Vector3`, `Color`: `DesignTests.ANodesStructOfNumbersIsSavedByItsFields`). The node inspector draws them by their type |
 
 Where v1 throws, the core does not: a composite without children and a decorator without a child fail, a Lock State
 Consideration without its set fails, a state without a tree is simply not ticked.
@@ -90,37 +91,37 @@ Consideration without its set fails, a state without a tree is simply not ticked
 
 | v1 | Where | In 2.0 |
 | -- | ----- | ------ |
-| The `UtilityDesigner` component on a GameObject | Unity layer | Wraps an `Agent` |
-| Evaluation and execution tick rates (0.01 to 1 s), or every Update | Unity layer | Calls `Agent.Evaluate(now)` and `Agent.Execute(now)` at those rates |
+| The `UtilityDesigner` component on a GameObject | Unity layer | `Runtime/UtilityDesigner.cs`: wraps an `Agent` (its `Agent` property); the shared considerations are `UtilityDesigner.Globals` |
+| Evaluation and execution tick rates (0.01 to 1 s), or every Update | Unity layer | The same settings; calls `Agent.Evaluate(now)` and `Agent.Execute(now)` at those rates of game time |
 | Ticked on real time (`WaitForSecondsRealtime`) | Plumbing | The caller's clock; game time in Unity, so a paused game stops deciding |
-| `UnityEngine.Random` and `System.Random` | Plumbing | One seeded `Rng` the caller passes in; a run repeats (`RunTests.TheSameSeedLivesTheSameDay`) |
+| `UnityEngine.Random` and `System.Random` | Plumbing | One seeded `Rng` the caller passes in; a run repeats (`RunTests.TheSameSeedLivesTheSameDay`). The component's Seed; 0 takes another one every run |
 | Each agent runs a copy of the behaviour asset (`UnlinkUtilityBehaviour`) | Plumbing | Each `Agent` owns a `Design`; `Designs.Copy`; a second agent on one design is refused |
-| `UtilityBehaviour` ScriptableObject, save and load by file name | Plumbing | Versioned JSON (`Designs.ToJson`, `FromJson`), loadable headless. The asset wrapper and the Save and Load buttons are the Unity layer's |
+| `UtilityBehaviour` ScriptableObject, save and load by file name | Plumbing | Versioned JSON (`Designs.ToJson`, `FromJson`), loadable headless. In Unity a behaviour is that `.json` file (a TextAsset on the component); Save and Load in the window pick the file |
 | `AnimationCurve` | Plumbing | `Curve` keys: the same Hermite, unclamped, stepped keys kept (`CurveTests.KeysAreAnAnimationCurve`); or a parametric shape. Weighted tangents and wrap modes other than clamp are not kept: the Unity layer converts or refuses them |
-| Log To File (`Assets/UtilityDesignerLog.txt`) and its tick rate | Core, Unity layer | `Agent.WriteLog` writes v1's entry (`RunTests.TheLogIsV1s`); the file and the rate are the Unity layer's |
+| Log To File (`Assets/UtilityDesignerLog.txt`) and its tick rate | Core, Unity layer | `Agent.WriteLog` writes v1's entry (`RunTests.TheLogIsV1s`); the component writes it to the same file at the log tick rate, in the editor only, as v1 |
 | | Plumbing, new | A parameter registry and override layers (`Designs.Parameters`, `Layer`, `Difference`), a decision trace (`Trace`) |
 
 ## Editor (all Unity layer)
 
-| v1 | |
-| -- | - |
-| Utility Designer window: Evaluation and Execution tabs | |
-| State set menu: add, remove (with confirmation), rename, switch | |
-| State list: add, remove, rename, reorder, select | |
-| State inspector: active, weight, execution factor, base score, min and max score toggles, fail chance slider, notes | |
-| Preconditions list: add, remove, rename, consideration dropdown, comparator, value | |
-| Evaluators list: add, remove, rename, consideration dropdown, weight slider with its share in percent, curve field, curve min and max | |
-| Consideration sets shown beside the states, with an edit button | |
-| Consideration Set window: local toggle, considerations add, remove, rename, initial value, min and max toggles, change per second | |
-| Save and Load by file name | |
-| Behaviour tree graph: grid, zoom, pan, drag, box select, edges between ports | |
-| Create node: context menu by category, the Add Node button, the search window (Space) | |
-| Copy and paste nodes (Ctrl+C, Ctrl+V), copy and paste a whole tree between states | |
-| Node view: colour by kind, description, the node's values on its face, notes | |
-| Node inspector: every public field, SceneRefs dropdowns | |
-| Play mode: each state's score with a bar, each consideration's runtime value, nodes coloured running, success or failure | |
-| The component's inspector: behaviour asset, scene refs object name, tick rates, log to file | |
-| Demos (Survival), the three render pipeline packages, the manual PDF | |
+| v1 | In 2.0 |
+| -- | ------ |
+| Utility Designer window: Evaluation and Execution tabs | `UtilityDesignerEditorWindow`, opened from the component. It follows the selection, and stays open through play |
+| State set menu: add, remove (with confirmation), rename, switch | Done |
+| State list: add, remove, rename, reorder, select | Done; reordered by dragging |
+| State inspector: active, weight, execution factor, base score, min and max score toggles, fail chance slider, notes | Done |
+| Preconditions list: add, remove, rename, consideration dropdown, comparator, value | Done |
+| Evaluators list: add, remove, rename, consideration dropdown, weight slider with its share in percent, curve field, curve min and max | Done. The curve field edits a Keys curve; a Shape dropdown reaches the core's other shapes, each four numbers, drawn in the field |
+| Consideration sets shown beside the states, with an edit button | Done: + adds a Consideration Set asset's set to the behaviour, Edit opens the asset |
+| Consideration Set window: local toggle, considerations add, remove, rename, initial value, min and max toggles, change per second | `ConsiderationSetEditorWindow`; closing it updates every behaviour that has the set |
+| Save and Load by file name | Done, as `.json`. A behaviour on the component is also saved whenever the window loses focus or closes, and before play |
+| Behaviour tree graph: grid, zoom, pan, drag, box select, edges between ports | `BehaviourTreeView`, on GraphView as v1. The root is drawn at a fixed place; nodes not connected to it are not saved, as in v1 |
+| Create node: context menu by category, the Add Node button, the search window (Space) | Done, with `[CategoryPath]` sub categories for the game's own nodes |
+| Copy and paste nodes (Ctrl+C, Ctrl+V), copy and paste a whole tree between states | Done |
+| Node view: colour by kind, description, the node's values on its face, notes | Done; the face shows every setting of the node |
+| Node inspector: every public field, SceneRefs dropdowns | Done: numbers, text, booleans, enums, vectors, colours, rects, bounds, quaternions; `[SceneRef]` fields and Change State Set's index as dropdowns |
+| Play mode: each state's score with a bar, each consideration's runtime value, nodes coloured running, success or failure | Done, read from the running agent. Changes made in play are not saved; nodes cannot be created then |
+| The component's inspector: behaviour asset, scene refs object name, tick rates, log to file | `UtilityDesignerEditor`, with the seed |
+| Demos (Survival), the three render pipeline packages, the manual PDF | Survival and Daily Routine run on 2.0: their behaviours are JSON, the three packages carry the scenes pointing at them. The manual PDF still describes v1 |
 
 ## For discussion
 

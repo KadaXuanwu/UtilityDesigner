@@ -13,31 +13,25 @@ MonoBehaviour:
   m_Name: UD Agent
   m_EditorClassIdentifier: 
   considerations:
-  - designation: Money
-    type: 0
-    initialValue: 0
-    setMinValue: 0
-    minValue: 0
-    setMaxValue: 0
-    maxValue: 0
-    changePerSecond: 0
-    useRealTime: 0
-  - designation: Hunger
-    type: 0
-    initialValue: 0
-    setMinValue: 1
-    minValue: 0
-    setMaxValue: 1
-    maxValue: 100
-    changePerSecond: 3
-    useRealTime: 0
-  - designation: Energy
-    type: 0
-    initialValue: 80
-    setMinValue: 1
-    minValue: 0
-    setMaxValue: 1
-    maxValue: 100
-    changePerSecond: -3
-    useRealTime: 0
+  - Name: Money
+    InitialValue: 0
+    SetMinValue: 0
+    MinValue: 0
+    SetMaxValue: 0
+    MaxValue: 0
+    ChangePerSecond: 0
+  - Name: Hunger
+    InitialValue: 0
+    SetMinValue: 1
+    MinValue: 0
+    SetMaxValue: 1
+    MaxValue: 100
+    ChangePerSecond: 3
+  - Name: Energy
+    InitialValue: 80
+    SetMinValue: 1
+    MinValue: 0
+    SetMaxValue: 1
+    MaxValue: 100
+    ChangePerSecond: -3
   local: 1

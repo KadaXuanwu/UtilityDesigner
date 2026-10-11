@@ -1,14 +1,12 @@
-using KadaXuanwu.UtilityDesigner.Scripts.Evaluation;
-using KadaXuanwu.UtilityDesigner.Scripts.Execution.Runtime;
+using KadaXuanwu.UtilityDesigner.Core;
 using UnityEngine;
 using UnityEngine.AI;
+using Designer = KadaXuanwu.UtilityDesigner.Runtime.UtilityDesigner;
 
 namespace KadaXuanwu.UtilityDesigner.Demos.Survival.Scripts
 {
     public class KillBear : ActionNode
     {
-        private ConsiderationSet _jamesConsiderations;
-        private ConsiderationSet _environmentConsiderations;
         private NavMeshAgent _navMeshAgentJames;
         private Transform _transformJames;
         private bool _referenceMissing;
@@ -19,20 +17,19 @@ namespace KadaXuanwu.UtilityDesigner.Demos.Survival.Scripts
         protected override void OnAwake()
         {
             _referenceMissing = false;
-            if (SceneRefs == null || ThisGameObject == null)
+            Designer designer = Designer.Of(Agent);
+            if (designer == null || designer.SceneReferences == null)
             {
                 _referenceMissing = true;
                 return;
             }
 
-            _jamesConsiderations = GetConsiderationSet("UD James");
-            _environmentConsiderations = GetConsiderationSet("UD Environment");
-            _navMeshAgentJames = ThisGameObject.GetComponent<NavMeshAgent>();
-            _transformJames = ThisGameObject.GetComponent<Transform>();
-            _transformCamera = SceneRefs.GetRef<Transform>("Main Camera");
-            _bear = SceneRefs.GetRef<Transform>("Bear").gameObject;
+            _navMeshAgentJames = designer.GetComponent<NavMeshAgent>();
+            _transformJames = designer.GetComponent<Transform>();
+            _transformCamera = designer.SceneReferences.GetRef<Transform>("Main Camera");
+            _bear = designer.SceneReferences.GetRef<Transform>("Bear").gameObject;
 
-            if (_jamesConsiderations == null || _environmentConsiderations == null || _transformJames == null ||
+            if (_transformJames == null ||
                 _navMeshAgentJames == null || _transformCamera == null || _bear == null)
                 _referenceMissing = true;
         }
@@ -42,14 +39,14 @@ namespace KadaXuanwu.UtilityDesigner.Demos.Survival.Scripts
             if (_referenceMissing)
                 return NodeState.Failure;
 
-            if (_jamesConsiderations.GetConsideration("Strength", UtilityDesigner) < 30)
+            if (Agent.GetConsideration("UD James", "Strength") < 30)
             {
                 Die();
                 return NodeState.Failure;
             }
             
             _bear.SendMessage("Escape", SendMessageOptions.DontRequireReceiver);
-            _environmentConsiderations.SetConsideration("Bears nearby", 0);
+            Agent.SetConsideration("UD Environment", "Bears nearby", 0);
             return NodeState.Success;
         }
 

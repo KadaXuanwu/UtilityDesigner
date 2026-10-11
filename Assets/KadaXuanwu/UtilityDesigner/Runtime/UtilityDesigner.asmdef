@@ -1,0 +1,7 @@
+{
+    "name": "UtilityDesigner",
+    "rootNamespace": "KadaXuanwu.UtilityDesigner.Runtime",
+    "references": [
+        "KadaXuanwu.UtilityDesigner.Core"
+    ]
+}

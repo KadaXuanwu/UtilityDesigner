@@ -92,10 +92,25 @@ namespace KadaXuanwu.UtilityDesigner.Core {
                     builder.Append(']');
                     break;
                 }
+                case float number:
+                    builder.Append(Shortest(number));
+                    break;
                 default:
                     builder.Append(Convert.ToDouble(value, CultureInfo.InvariantCulture).ToString("R", CultureInfo.InvariantCulture));
                     break;
             }
+        }
+
+        // The shortest text that reads back as the same float: 0.15, not the double nearest to it. Found by trying, so
+        // that every runtime writes the same (Mono's and .NET's round-trip formats differ).
+        private static string Shortest(float number) {
+            for (int digits = 1; digits < 9; digits++) {
+                string text = number.ToString("G" + digits, CultureInfo.InvariantCulture);
+                if (float.Parse(text, NumberStyles.Float, CultureInfo.InvariantCulture) == number) {
+                    return text;
+                }
+            }
+            return number.ToString("G9", CultureInfo.InvariantCulture);
         }
 
         private static object Value(string text, ref int at) {

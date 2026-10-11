@@ -13,49 +13,39 @@ MonoBehaviour:
   m_Name: UD James
   m_EditorClassIdentifier: 
   considerations:
-  - designation: Hunger
-    type: 0
-    initialValue: 0
-    setMinValue: 1
-    minValue: 0
-    setMaxValue: 1
-    maxValue: 100
-    changePerSecond: 1.5
-    useRealTime: 0
-  - designation: Energy
-    type: 0
-    initialValue: 80
-    setMinValue: 1
-    minValue: 0
-    setMaxValue: 1
-    maxValue: 100
-    changePerSecond: -1
-    useRealTime: 0
-  - designation: Food
-    type: 0
-    initialValue: 0
-    setMinValue: 0
-    minValue: 0
-    setMaxValue: 0
-    maxValue: 0
-    changePerSecond: 0
-    useRealTime: 0
-  - designation: Motivation
-    type: 0
-    initialValue: 80
-    setMinValue: 1
-    minValue: 0
-    setMaxValue: 1
-    maxValue: 100
-    changePerSecond: -1
-    useRealTime: 0
-  - designation: Strength
-    type: 0
-    initialValue: 80
-    setMinValue: 1
-    minValue: 0
-    setMaxValue: 1
-    maxValue: 100
-    changePerSecond: -0.5
-    useRealTime: 0
+  - Name: Hunger
+    InitialValue: 0
+    SetMinValue: 1
+    MinValue: 0
+    SetMaxValue: 1
+    MaxValue: 100
+    ChangePerSecond: 1.5
+  - Name: Energy
+    InitialValue: 80
+    SetMinValue: 1
+    MinValue: 0
+    SetMaxValue: 1
+    MaxValue: 100
+    ChangePerSecond: -1
+  - Name: Food
+    InitialValue: 0
+    SetMinValue: 0
+    MinValue: 0
+    SetMaxValue: 0
+    MaxValue: 0
+    ChangePerSecond: 0
+  - Name: Motivation
+    InitialValue: 80
+    SetMinValue: 1
+    MinValue: 0
+    SetMaxValue: 1
+    MaxValue: 100
+    ChangePerSecond: -1
+  - Name: Strength
+    InitialValue: 80
+    SetMinValue: 1
+    MinValue: 0
+    SetMaxValue: 1
+    MaxValue: 100
+    ChangePerSecond: -0.5
   local: 1
