@@ -174,6 +174,7 @@ namespace KadaXuanwu.UtilityDesigner.Editor {
             root.Q<VisualElement>("StatesContent").Add(_statesListView);
             _decisions = new Label { name = "LabelDecisions", tooltip = "The agent's last decisions: when it took up a state, its score, and the best state it left." };
             _decisions.style.flexShrink = 0;
+            _decisions.style.whiteSpace = WhiteSpace.Normal;
             _decisions.style.marginLeft = _decisions.style.marginBottom = 5;
             root.Q<VisualElement>("StatesContainer").Add(_decisions);
             _preconditionsListView = PreconditionsList(Template("TemplateItemPrecondition"));
@@ -247,9 +248,9 @@ namespace KadaXuanwu.UtilityDesigner.Editor {
         private void LoadDesign() {
             if (Application.isPlaying) {
                 _design = _designer.Agent?.Design;
-                // The window turns the trace on, so an agent nobody looks at keeps none.
+                // The window turns the trace on, so an agent nobody looks at keeps none; several minutes of evaluations.
                 if (_designer.Agent != null) {
-                    _designer.Agent.Trace ??= new Trace();
+                    _designer.Agent.Trace ??= new Trace(4096);
                 }
                 return;
             }

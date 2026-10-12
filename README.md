@@ -34,7 +34,8 @@ Everything is under `Assets/KadaXuanwu/UtilityDesigner`:
    with their preconditions and evaluators (Evaluation tab) and each state's behaviour tree (Execution tab).
 3. Save: the behaviour is written as a `.json` file and given to the component. From then on it is saved whenever the
    window loses focus or closes, and before play starts.
-4. Play. The window shows the selected agent's scores, consideration values and running nodes.
+4. Play. The window shows the selected agent's scores, consideration values and running nodes, and under the states
+   its last decisions: when it took up a state, at which score, and the best state it left.
 
 The component ticks on game time, so a paused game stops deciding. Its Seed makes a run repeat; 0 takes another seed
 every run.
