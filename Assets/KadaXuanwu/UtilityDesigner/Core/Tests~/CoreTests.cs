@@ -995,6 +995,37 @@ namespace KadaXuanwu.UtilityDesigner.Tests {
             Assert.That(Designs.ToJson(plain), Is.EqualTo(Designs.ToJson(design)));
         }
 
+        // What a search does to a design: links added and removed, numbers moved. The result is a design like any other.
+        [Test]
+        public void ADesignEditedByAProgramRunsAndSurvivesJson() {
+            Design design = Villager.Design();
+            State eat = design.StateSets[0].States[0];
+            eat.Evaluators.Add(new Evaluator { Name = "Tired", Consideration = "Needs | Energy", Weight = 0.5f, Curve = Curve.Logistic(8f, 0.5f) });
+            eat.Preconditions.Add(new Precondition { Name = "Awake", Consideration = "Needs | Energy", Comparator = Comparator.GreaterThan, Value = 0.1f });
+            State wander = design.StateSets[0].States[3];
+            wander.Evaluators.Clear();
+            wander.Preconditions.Clear();
+            Designs.Layer(design, "{\"states.Day.Eat.Tired.m\": 6, \"states.Day.Eat.Awake.value\": 0.2}");
+
+            string json = Designs.ToJson(design);
+            Design read = Designs.FromJson(json);
+            Assert.That(Designs.ToJson(read), Is.EqualTo(json));
+            Assert.That(read.StateSets[0].States[0].Evaluators.Last().Curve.M, Is.EqualTo(6f));
+            Assert.That(Day(json), Is.EqualTo(Day(json)));
+            Assert.That(Day(json), Is.Not.EqualTo(Villager.Live(42)), "the edits count");
+
+            List<string> Day(string of) {
+                Villager villager = new Villager(Designs.FromJson(of), new Globals(), 42);
+                for (int i = 0; i < 2000; i++) {
+                    villager.Tick(i * 0.1);
+                }
+                return villager.Diary;
+            }
+
+            eat.Evaluators.Add(new Evaluator { Name = "Tired" });
+            Assert.Throws<ArgumentException>(() => Designs.Layer(design, "{}"));
+        }
+
         [Test]
         public void ANodeWithAnIdIsNamedByItInALayer() {
             Bench bench = new Bench();

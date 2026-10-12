@@ -18,7 +18,8 @@ plumbing differs: the caller owns the clock and the random numbers, and a design
   `NodeTypes.Register`; their public fields are their settings.
 - `Curve`: keyframes (Unity's `AnimationCurve` shapes) or four numbers (Linear, Polynomial, Logistic, Logit, Sine,
   Step).
-- `Designs`: versioned JSON, every tunable number as a `Parameter` (an optimizer's vector), override layers.
+- `Designs`: versioned JSON, every tunable number as a `Parameter` (an optimizer's vector), override layers. A
+  number's id is its names (`states.Day.Eat.Hunger.weight`): keep the names in one state different.
 - `Trace`: the last evaluations, every state's score, as JSON lines; `Agent.WriteLog` writes v1's log entry.
 
 ```csharp

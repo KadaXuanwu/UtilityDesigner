@@ -43,6 +43,29 @@ namespace KadaXuanwu.UtilityDesigner.Editor.Tests {
         }
 
         [Test]
+        public void TheWindowListsTheDecisionsOfATrace() {
+            Design design = new Design { Name = "D" };
+            design.ConsiderationSets.Add(new ConsiderationSet { Name = "S", Local = true, Considerations = { new Consideration { Name = "a" } } });
+            design.StateSets.Add(new StateSet {
+                Name = "Main", States = {
+                    new State { Name = "Rest", BaseScore = 0.5f },
+                    new State { Name = "Act", Evaluators = { new Evaluator { Name = "e", Consideration = "S | a", Weight = 1f, Curve = Curve.Linear() } } },
+                },
+            });
+            Agent agent = new Agent(design, new Globals(), new Rng(1)) { Trace = new Trace(4) };
+            agent.Evaluate(0.0);
+            agent.SetConsideration("S", "a", 0.9f);
+            agent.Evaluate(1.0);
+            agent.Evaluate(2.0);
+            Assert.That(UtilityDesignerEditorWindow.Decisions(agent.Trace, 8), Is.EqualTo("1.0 s  Act 0.900  over Rest 0.500\n0.0 s  Rest 0.500  over Act 0.000"));
+            Assert.That(UtilityDesignerEditorWindow.Decisions(agent.Trace, 1), Is.EqualTo("1.0 s  Act 0.900  over Rest 0.500"));
+            // Full, the trace no longer knows what ran before its oldest entry.
+            agent.Evaluate(3.0);
+            agent.Evaluate(4.0);
+            Assert.That(UtilityDesignerEditorWindow.Decisions(agent.Trace, 8), Is.Empty);
+        }
+
+        [Test]
         public void AUnityNodeKeepsItsVectorThroughJson() {
             MoveToPosition node = (MoveToPosition)Utils.TreeFromJson(Utils.TreeJson(new MoveToPosition { Pos = new Vector3(1.5f, -2f, 3f), SetSpeed = true, Speed = 4f }));
             Assert.That(node.Pos, Is.EqualTo(new Vector3(1.5f, -2f, 3f)));
