@@ -121,7 +121,7 @@ Consideration without its set fails, a state without a tree is simply not ticked
 | Node inspector: every public field, SceneRefs dropdowns | Done: numbers, text, booleans, enums, vectors, colours, rects, bounds, quaternions; `[SceneRef]` fields and Change State Set's index as dropdowns |
 | Play mode: each state's score with a bar, each consideration's runtime value, nodes coloured running, success or failure | Done, read from the running agent. New: under the states, its last decisions from the decision trace (`EditorTests.TheWindowListsTheDecisionsOfATrace`). Changes made in play are not saved; nodes cannot be created then |
 | The component's inspector: behaviour asset, scene refs object name, tick rates, log to file | `UtilityDesignerEditor`, with the seed |
-| Demos (Survival), the three render pipeline packages, the manual PDF | Survival and Daily Routine run on 2.0: their behaviours are JSON, the three packages carry the scenes pointing at them. The manual PDF still describes v1 |
+| Demos (Survival), the three render pipeline packages, the manual PDF | Survival and Daily Routine run on 2.0: their behaviours are JSON, the three packages carry the scenes pointing at them. The manual PDF, which described v1, is gone: the README is the manual |
 
 ## For discussion
 

@@ -6,6 +6,6 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/KadaXuanwu/UtilityDesigner/Demos/URP_DailyRoutine.unity
-    guid: 3cb60428b1e6e744dbb581c1e60e3cee
+    path: Assets/Scenes/Survival.unity
+    guid: 7ee547dc1067b5148bd56618e9b4305c
   m_configObjects: {}

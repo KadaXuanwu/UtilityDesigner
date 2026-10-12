@@ -24,7 +24,9 @@ Everything is under `Assets/KadaXuanwu/UtilityDesigner`:
 - `Demos`: the Survival and Daily Routine behaviours and scripts. Their scenes are in three packages, one for each
   render pipeline (`DemosBuiltIn`, `DemosURP`, `DemosHDRP`): import the one for your pipeline, and Unity's AI Navigation
   package for the pathfinding. `Assets/Scenes/Survival.unity` is the Survival scene with better looking assets, which
-  come from another pack and cannot be bundled.
+  come from another pack and cannot be bundled. It is the scene in the build settings. A built Survival logs
+  `Failed to create agent because there is no valid NavMesh` once for each character at start: Unity makes the agents
+  before the NavMesh Surface adds its NavMesh, and puts them on it before the first frame. They walk.
 
 ## Using it
 
