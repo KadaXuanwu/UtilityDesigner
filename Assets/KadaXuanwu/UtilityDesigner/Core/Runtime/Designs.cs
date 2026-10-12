@@ -256,11 +256,14 @@ namespace KadaXuanwu.UtilityDesigner.Core {
             }
         }
 
-        // A layer: {"id": value, ...} laid over the design; an id it does not have fails loudly.
+        // A layer: {"id": value, ...} laid over the design; an id it does not have fails loudly, and so does a design
+        // with two numbers under one id (two evaluators of one name in a state): a layer could only reach the last.
         public static void Layer(Design design, string layer) {
             Dictionary<string, Parameter> byId = new Dictionary<string, Parameter>();
             foreach (Parameter parameter in Parameters(design)) {
-                byId[parameter.Id] = parameter;
+                if (!byId.TryAdd(parameter.Id, parameter)) {
+                    throw new ArgumentException($"{design.Name} has two numbers named {parameter.Id}; a layer needs every name once.");
+                }
             }
             foreach (KeyValuePair<string, object> pair in (Dictionary<string, object>)Json.Parse(layer)) {
                 if (!byId.TryGetValue(pair.Key, out Parameter parameter)) {

@@ -28,6 +28,7 @@ namespace KadaXuanwu.UtilityDesigner.Core {
         private int _next;
 
         public int Count { get; private set; }
+        public int Capacity => _entries.Length;
 
         public Trace(int capacity = 256) {
             _entries = new Entry[capacity];

@@ -73,6 +73,7 @@ namespace KadaXuanwu.UtilityDesigner.Editor {
         private ListView _considerationSetsListView;
         private ListView _considerationsListView;
         private BehaviourTreeView _treeView;
+        private Label _decisions;
         private VisualElement _inspectorContent;
         private Label _labelNodeDescription;
 
@@ -171,6 +172,10 @@ namespace KadaXuanwu.UtilityDesigner.Editor {
             RegisterStateInspector();
             _statesListView = StatesList(Template("TemplateItemState"));
             root.Q<VisualElement>("StatesContent").Add(_statesListView);
+            _decisions = new Label { name = "LabelDecisions", tooltip = "The agent's last decisions: when it took up a state, its score, and the best state it left." };
+            _decisions.style.flexShrink = 0;
+            _decisions.style.marginLeft = _decisions.style.marginBottom = 5;
+            root.Q<VisualElement>("StatesContainer").Add(_decisions);
             _preconditionsListView = PreconditionsList(Template("TemplateItemPrecondition"));
             root.Q<VisualElement>("PreconditionsContent").Add(_preconditionsListView);
             _evaluatorsListView = EvaluatorsList(Template("TemplateItemEvaluator"));
@@ -209,13 +214,43 @@ namespace KadaXuanwu.UtilityDesigner.Editor {
             _textFieldFileName.value = _loadedFrom != null ? _loadedFrom.name : _design.Name;
             rootVisualElement.Q<Button>("ButtonSave").SetEnabled(!Application.isPlaying);
             rootVisualElement.Q<Button>("ButtonLoad").SetEnabled(!Application.isPlaying);
+            _decisions.style.display = Application.isPlaying ? DisplayStyle.Flex : DisplayStyle.None;
             SelectStateSet(stateSetIndex, stateIndex);
             RefreshConsiderationSets();
+        }
+
+        // The last decisions a trace kept, newest first: when the agent took up another state, that state's score, and
+        // the best of the states it could have chosen instead.
+        internal static string Decisions(Trace trace, int count) {
+            List<string> lines = new List<string>();
+            for (int i = 0; i < trace.Count; i++) {
+                Trace.Entry entry = trace[i];
+                // The oldest entry of a full trace is no decision: what ran before it is gone.
+                if (i == 0 ? trace.Count == trace.Capacity : entry.Executing == trace[i - 1].Executing) {
+                    continue;
+                }
+                string line = $"{entry.Time.ToString("F1", CultureInfo.InvariantCulture)} s  {(entry.Executing.Length > 0 ? entry.Executing : "nothing")}";
+                Trace.Option? left = null;
+                foreach (Trace.Option option in entry.Options) {
+                    if (option.State == entry.Executing) {
+                        line += $" {option.Score.ToString("F3", CultureInfo.InvariantCulture)}";
+                    } else if (option.Available && (left == null || option.Score > left.Value.Score)) {
+                        left = option;
+                    }
+                }
+                lines.Add(left == null ? line : $"{line}  over {left.Value.State} {left.Value.Score.ToString("F3", CultureInfo.InvariantCulture)}");
+            }
+            lines.Reverse();
+            return string.Join("\n", lines.Take(count));
         }
 
         private void LoadDesign() {
             if (Application.isPlaying) {
                 _design = _designer.Agent?.Design;
+                // The window turns the trace on, so an agent nobody looks at keeps none.
+                if (_designer.Agent != null) {
+                    _designer.Agent.Trace ??= new Trace();
+                }
                 return;
             }
             if (_designer.Behaviour == null) {
@@ -889,6 +924,9 @@ namespace KadaXuanwu.UtilityDesigner.Editor {
         private void OnInspectorUpdate() {
             if (!Application.isPlaying || _design == null || _designer == null) {
                 return;
+            }
+            if (_designer.Agent?.Trace != null) {
+                _decisions.text = Decisions(_designer.Agent.Trace, 8);
             }
             List<State> states = StateSet.States;
             float highest = states.Select(state => state.LastScore).Prepend(0f).Max();
