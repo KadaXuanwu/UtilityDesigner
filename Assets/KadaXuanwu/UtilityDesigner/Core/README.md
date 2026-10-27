@@ -21,6 +21,8 @@ plumbing differs: the caller owns the clock and the random numbers, and a design
 - `Designs`: versioned JSON, every tunable number as a `Parameter` (an optimizer's vector), override layers. A
   number's id is its names (`states.Day.Eat.Hunger.weight`): keep the names in one state different.
 - `Trace`: the last evaluations, every state's score, as JSON lines; `Agent.WriteLog` writes v1's log entry.
+- `OfferedAgents`: the agents the game offers to a viewer (the Utility Designer window) by a name, each with the lock
+  it is ticked under; safe from any thread.
 
 ```csharp
 Design design = Designs.FromJson(json);
