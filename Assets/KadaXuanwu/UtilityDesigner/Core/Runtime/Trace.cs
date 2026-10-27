@@ -55,12 +55,13 @@ namespace KadaXuanwu.UtilityDesigner.Core {
             }
         }
 
-        // One JSON object a line, oldest first.
+        // One JSON object a line, oldest first. Numbers print with every digit (G9, G17), which round-trips and reads the
+        // same on every runtime: "R" and the default format give Mono's G7 or G15 but .NET's shortest form.
         public void Write(TextWriter writer) {
             for (int i = 0; i < Count; i++) {
                 Entry entry = this[i];
                 StringBuilder line = new StringBuilder();
-                line.Append("{\"time\":").Append(entry.Time.ToString(CultureInfo.InvariantCulture));
+                line.Append("{\"time\":").Append(entry.Time.ToString("G17", CultureInfo.InvariantCulture));
                 line.Append(",\"agent\":").Append(Json.Quote(entry.Agent));
                 line.Append(",\"stateSet\":").Append(Json.Quote(entry.StateSet));
                 line.Append(",\"executing\":").Append(Json.Quote(entry.Executing));
@@ -69,7 +70,7 @@ namespace KadaXuanwu.UtilityDesigner.Core {
                 for (int o = 0; o < entry.Options.Count; o++) {
                     Option option = entry.Options[o];
                     line.Append(o > 0 ? "," : "").Append("{\"state\":").Append(Json.Quote(option.State));
-                    line.Append(",\"score\":").Append(option.Score.ToString(CultureInfo.InvariantCulture));
+                    line.Append(",\"score\":").Append(option.Score.ToString("G9", CultureInfo.InvariantCulture));
                     line.Append(",\"available\":").Append(option.Available ? "true" : "false").Append('}');
                 }
                 writer.WriteLine(line.Append("]}").ToString());
