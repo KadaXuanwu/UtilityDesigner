@@ -21,7 +21,8 @@ Everything is under `Assets/KadaXuanwu/UtilityDesigner`:
   Unity (Move To Position, Move To Transform, Compare Distance, Debug Log, Debug Breakpoint).
 - `Editor`: the Utility Designer window, the Consideration Set window, the component's inspector. Tests in
   `Editor/Tests`, run from Unity's Test Runner.
-- `Demos`: the Survival and Daily Routine behaviours and scripts. Their scenes are in three packages, one for each
+- `Demos`: the Survival and Daily Routine behaviours and scripts, and `Threaded`: agents ticked on a worker thread
+  and offered to the window. Their scenes are in three packages, one for each
   render pipeline (`DemosBuiltIn`, `DemosURP`, `DemosHDRP`): import the one for your pipeline, and Unity's AI Navigation
   package for the pathfinding. `Assets/Scenes/Survival.unity` is the Survival scene with better looking assets, which
   come from another pack and cannot be bundled. It is the scene in the build settings. A built Survival logs
@@ -49,6 +50,21 @@ float hunger = jamesConsiderations.GetConsideration("Hunger", gameObject);   // 
 environmentConsiderations.SetConsideration("Bears nearby", 1);              // a shared set
 GetComponent<UtilityDesigner>().Agent.ChangeConsideration("UD James", "Food", 2);
 ```
+
+## Agents without a component
+
+An agent that game code runs itself (a plain C# simulation, a worker thread) can be shown in the window too. Offer it
+by a name, and take it back when it ends:
+
+```csharp
+OfferedAgents.Add("Bot 1", agent, gate);   // gate: the lock you hold while you tick it; null if it ticks on the main thread
+lock (gate) { agent.Evaluate(now); agent.Execute(now); }
+OfferedAgents.Remove(agent);               // a window showing it then shows nothing
+```
+
+In play, the window's Offered agents menu lists them; pick one to see it live, as a selected component's agent. The
+window reads the agent only while it holds the gate, turns its trace on, and changes nothing. `Demos/Threaded` has
+`ThreadedVillagers`: add it to any GameObject and play.
 
 ## Your own nodes
 
