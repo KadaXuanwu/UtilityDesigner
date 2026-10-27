@@ -122,6 +122,11 @@ namespace KadaXuanwu.UtilityDesigner.Editor {
         }
 
         private GraphViewChange OnGraphViewChanged(GraphViewChange change) {
+            if (_window.ReadOnly) {
+                change.elementsToRemove?.Clear();
+                change.edgesToCreate?.Clear();
+                return change;
+            }
             change.elementsToRemove?.ForEach(element => {
                 if (element is Edge edge && edge.output.node is NodeView parent && edge.input.node is NodeView child) {
                     parent.RemoveChild(child.node);

@@ -1100,5 +1100,40 @@ namespace KadaXuanwu.UtilityDesigner.Tests {
                 "", "", "",
             }));
         }
+
+        [Test]
+        public void AGameOffersAnAgentAndTakesItBack() {
+            Bench bench = new Bench();
+            bench.Value("a", 0.5f);
+            bench.State("A", "a");
+            Agent agent = bench.Agent();
+            object gate = new object();
+            int version = OfferedAgents.Version;
+            OfferedAgents.Add("First", agent);
+            OfferedAgents.Add("Bot 1", agent, gate);
+            OfferedAgents.Offer offer = OfferedAgents.All().Single(o => o.Agent == agent);
+            Assert.That((offer.Name, offer.Gate), Is.EqualTo(("Bot 1", gate)));
+            Assert.That(OfferedAgents.Version, Is.EqualTo(version + 2));
+
+            // Ticked on another thread under the gate, read here under it.
+            System.Threading.Thread worker = new System.Threading.Thread(() => {
+                for (int i = 0; i < 200; i++) {
+                    lock (gate) {
+                        agent.Evaluate(i * 0.1);
+                        agent.Execute(i * 0.1);
+                    }
+                }
+            });
+            worker.Start();
+            worker.Join();
+            lock (offer.Gate) {
+                Assert.That(offer.Agent.ExecutingState.LastScore, Is.EqualTo(0.5f).Within(1e-6f));
+            }
+
+            OfferedAgents.Remove(agent);
+            OfferedAgents.Remove(agent);
+            Assert.That(OfferedAgents.All().Any(o => o.Agent == agent), Is.False);
+            Assert.That(OfferedAgents.Version, Is.EqualTo(version + 3));
+        }
     }
 }

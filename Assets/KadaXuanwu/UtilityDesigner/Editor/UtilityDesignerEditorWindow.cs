@@ -17,7 +17,8 @@ using Node = KadaXuanwu.UtilityDesigner.Core.Node;
 namespace KadaXuanwu.UtilityDesigner.Editor {
     // The Utility Designer window, for the selected GameObject's UtilityDesigner. Outside play it edits the behaviour's
     // JSON, saved whenever the window loses focus or closes and before play starts. In play it shows the running agent:
-    // every state's score, the considerations' values, the nodes' states; changes made then are not saved.
+    // every state's score, the considerations' values, the nodes' states; changes made then are not saved. In play it can
+    // also show an agent the game offers (OfferedAgents), read only.
     public class UtilityDesignerEditorWindow : EditorWindow {
         private static readonly Vector2 WindowMinSize = new Vector2(1350, 600);
         private const float ItemStateHeight = 80;
@@ -40,6 +41,10 @@ namespace KadaXuanwu.UtilityDesigner.Editor {
         [SerializeField] private bool execution;
 
         private Designer _designer;
+        // The agent shown in play: the component's, or the offered one's.
+        private Agent _agent;
+        private OfferedAgents.Offer _offer;
+        private int _offersVersion = -1;
         private Design _design;
         // The file the design was read from: where it is saved.
         private TextAsset _loadedFrom;
@@ -76,8 +81,11 @@ namespace KadaXuanwu.UtilityDesigner.Editor {
         private Label _decisions;
         private VisualElement _inspectorContent;
         private Label _labelNodeDescription;
+        private ToolbarMenu _menuAgents;
 
         internal SceneReferences SceneReferences { get; private set; }
+        // An offered agent may tick on another thread: the window shows it, and changes nothing.
+        internal bool ReadOnly => _offer != null;
 
         private StateSet StateSet => _design.StateSets[Mathf.Clamp(stateSetIndex, 0, _design.StateSets.Count - 1)];
 
@@ -118,6 +126,8 @@ namespace KadaXuanwu.UtilityDesigner.Editor {
             if (change == PlayModeStateChange.ExitingEditMode) {
                 SaveLinked();
             } else if (_container != null && (change == PlayModeStateChange.EnteredPlayMode || change == PlayModeStateChange.EnteredEditMode)) {
+                _offersVersion = -1;
+                _menuAgents.style.display = DisplayStyle.None;
                 Designer selected = Selection.activeGameObject != null ? Selection.activeGameObject.GetComponent<Designer>() : null;
                 Target(selected != null ? selected : _designer);
             }
@@ -128,6 +138,12 @@ namespace KadaXuanwu.UtilityDesigner.Editor {
             string directory = Path.GetDirectoryName(AssetDatabase.GetAssetPath(MonoScript.FromScriptableObject(this)));
             VisualTreeAsset Template(string name) => AssetDatabase.LoadAssetAtPath<VisualTreeAsset>($"{directory}/UXML/{name}.uxml");
             Template("UtilityDesigner").CloneTree(root);
+            // Outside the container, which hides while nothing is shown.
+            _menuAgents = new ToolbarMenu { text = "Offered agents", tooltip = "The agents the game offers: pick one to show it." };
+            _menuAgents.style.display = DisplayStyle.None;
+            Toolbar offered = new Toolbar();
+            offered.Add(_menuAgents);
+            root.Insert(0, offered);
 
             _container = root.Q<VisualElement>("Container");
             _evaluationSection = root.Q<VisualElement>("EvaluationSection");
@@ -193,28 +209,37 @@ namespace KadaXuanwu.UtilityDesigner.Editor {
         // ----------------------------------------------------------------------
         // -------------------- T H E   D E S I G N -----------------------------
 
-        // Shows a component's design: its behaviour file, or the running agent's in play.
-        private void Target(Designer designer) {
+        // Shows a component's design: its behaviour file, or the running agent's in play. Or, in play, an offered agent's.
+        private void Target(Designer designer, OfferedAgents.Offer offer = null) {
             SaveLinked();
             _designer = designer;
+            _offer = offer;
+            _agent = offer != null ? offer.Agent : Application.isPlaying && designer != null ? designer.Agent : null;
             _design = null;
             _loadedFrom = null;
             _selectedState = null;
             _selectedConsiderationSet = null;
-            if (designer != null) {
+            if (designer != null || offer != null) {
                 LoadDesign();
             }
             _container.style.display = _design != null ? DisplayStyle.Flex : DisplayStyle.None;
             if (_design == null) {
                 return;
             }
-            SceneReferences = Application.isPlaying ? designer.SceneReferences : designer.FindSceneReferences();
+            SceneReferences = offer != null ? Designer.Of(offer.Agent)?.SceneReferences
+                : Application.isPlaying ? designer.SceneReferences : designer.FindSceneReferences();
             if (SceneReferences != null && !Application.isPlaying) {
                 SceneReferences.Initialize();
             }
-            _textFieldFileName.value = _loadedFrom != null ? _loadedFrom.name : _design.Name;
+            _textFieldFileName.value = offer != null ? offer.Name : _loadedFrom != null ? _loadedFrom.name : _design.Name;
             rootVisualElement.Q<Button>("ButtonSave").SetEnabled(!Application.isPlaying);
             rootVisualElement.Q<Button>("ButtonLoad").SetEnabled(!Application.isPlaying);
+            foreach (string button in new[] { "ButtonRenameStateSet", "ButtonAddStateSet", "ButtonRemoveStateSet", "ButtonAddState", "ButtonAddConsiderationSet" }) {
+                rootVisualElement.Q<Button>(button).SetEnabled(!ReadOnly);
+            }
+            _specificsContainer.SetEnabled(!ReadOnly);
+            _inspectorContent.SetEnabled(!ReadOnly);
+            _statesListView.reorderable = !ReadOnly;
             _decisions.style.display = Application.isPlaying ? DisplayStyle.Flex : DisplayStyle.None;
             SelectStateSet(stateSetIndex, stateIndex);
             RefreshConsiderationSets();
@@ -247,10 +272,12 @@ namespace KadaXuanwu.UtilityDesigner.Editor {
 
         private void LoadDesign() {
             if (Application.isPlaying) {
-                _design = _designer.Agent?.Design;
+                _design = _agent?.Design;
                 // The window turns the trace on, so an agent nobody looks at keeps none; several minutes of evaluations.
-                if (_designer.Agent != null) {
-                    _designer.Agent.Trace ??= new Trace(4096);
+                if (_agent != null) {
+                    lock (Gate) {
+                        _agent.Trace ??= new Trace(4096);
+                    }
                 }
                 return;
             }
@@ -272,6 +299,8 @@ namespace KadaXuanwu.UtilityDesigner.Editor {
                 _design.StateSets.Add(new StateSet { Name = "State Set 1" });
             }
         }
+
+        private object Gate => _offer?.Gate ?? this;
 
         private void SaveLinked() {
             if (!Application.isPlaying && _design != null && _loadedFrom != null) {
@@ -406,6 +435,7 @@ namespace KadaXuanwu.UtilityDesigner.Editor {
             }, (item, i) => {
                 item.userData = i;
                 item.Q<Label>("LabelTitle").text = StateSet.States[i].Name;
+                item.Q<Button>("ButtonRemoveElement").SetEnabled(!ReadOnly);
             }) { selectionType = SelectionType.Single, reorderable = true };
             list.unbindItem = (item, _) => item.userData = -1;
             list.selectionChanged += selected => SelectState((State)selected.FirstOrDefault());
@@ -689,6 +719,7 @@ namespace KadaXuanwu.UtilityDesigner.Editor {
             }, (item, i) => {
                 item.userData = i;
                 item.Q<Label>("LabelTitle").text = _design.ConsiderationSets[i].Name;
+                item.Q<Button>("ButtonRemoveElement").SetEnabled(!ReadOnly);
             }) { selectionType = SelectionType.Single };
             list.selectionChanged += selected => {
                 _selectedConsiderationSet = (ConsiderationSet)selected.FirstOrDefault();
@@ -923,46 +954,70 @@ namespace KadaXuanwu.UtilityDesigner.Editor {
         }
 
         private void OnInspectorUpdate() {
-            if (!Application.isPlaying || _design == null || _designer == null) {
+            if (!Application.isPlaying || _container == null) {
                 return;
             }
-            if (_designer.Agent?.Trace != null) {
-                _decisions.text = Decisions(_designer.Agent.Trace, 8);
-            }
-            List<State> states = StateSet.States;
-            float highest = states.Select(state => state.LastScore).Prepend(0f).Max();
-            foreach (VisualElement row in Rows(_statesListView, states.Count)) {
-                State state = states[RowIndex(row)];
-                row.Q<Label>("LabelScoreTotal").style.visibility = Visibility.Visible;
-                row.Q<Label>("LabelScoreTotalValue").style.visibility = Visibility.Visible;
-                row.Q<VisualElement>("ContainerScoreDisplay").style.visibility = Visibility.Visible;
-                row.Q<Label>("LabelScoreTotalValue").text = state.LastScore.ToString("F3", CultureInfo.InvariantCulture);
-                row.Q<VisualElement>("ScoreDisplay").style.width = Length.Percent(highest > 0f ? Mathf.Clamp01(state.LastScore / highest) * 100f : 0f);
-                row.style.backgroundColor = state.Preconditions.Any(precondition => !precondition.LastConditionMet) ? Unmet : new Color(0, 0, 0, 0);
-            }
-            if (execution) {
-                _treeView.UpdateNodeStates();
+            RefreshOffers();
+            if (_design == null || _agent == null || (_offer == null && _designer == null)) {
                 return;
             }
-            if (_selectedState != null) {
-                foreach (VisualElement row in Rows(_preconditionsListView, _selectedState.Preconditions.Count)) {
-                    row.style.backgroundColor = _selectedState.Preconditions[RowIndex(row)].LastConditionMet ? Met : Unmet;
+            lock (Gate) {
+                if (_agent.Trace != null) {
+                    _decisions.text = Decisions(_agent.Trace, 8);
                 }
-                float total = _selectedState.Evaluators.Sum(evaluator => evaluator.Weight);
-                foreach (VisualElement row in Rows(_evaluatorsListView, _selectedState.Evaluators.Count)) {
-                    Evaluator evaluator = _selectedState.Evaluators[RowIndex(row)];
-                    row.Q<VisualElement>("Score").style.width =
-                        Length.Percent(total > 0f ? Mathf.Clamp01(evaluator.LastScore * evaluator.Weight / total) * 100f : 0f);
+                List<State> states = StateSet.States;
+                float highest = states.Select(state => state.LastScore).Prepend(0f).Max();
+                foreach (VisualElement row in Rows(_statesListView, states.Count)) {
+                    State state = states[RowIndex(row)];
+                    row.Q<Label>("LabelScoreTotal").style.visibility = Visibility.Visible;
+                    row.Q<Label>("LabelScoreTotalValue").style.visibility = Visibility.Visible;
+                    row.Q<VisualElement>("ContainerScoreDisplay").style.visibility = Visibility.Visible;
+                    row.Q<Label>("LabelScoreTotalValue").text = state.LastScore.ToString("F3", CultureInfo.InvariantCulture);
+                    row.Q<VisualElement>("ScoreDisplay").style.width = Length.Percent(highest > 0f ? Mathf.Clamp01(state.LastScore / highest) * 100f : 0f);
+                    row.style.backgroundColor = state.Preconditions.Any(precondition => !precondition.LastConditionMet) ? Unmet : new Color(0, 0, 0, 0);
+                }
+                if (execution) {
+                    _treeView.UpdateNodeStates();
+                    return;
+                }
+                if (_selectedState != null) {
+                    foreach (VisualElement row in Rows(_preconditionsListView, _selectedState.Preconditions.Count)) {
+                        row.style.backgroundColor = _selectedState.Preconditions[RowIndex(row)].LastConditionMet ? Met : Unmet;
+                    }
+                    float total = _selectedState.Evaluators.Sum(evaluator => evaluator.Weight);
+                    foreach (VisualElement row in Rows(_evaluatorsListView, _selectedState.Evaluators.Count)) {
+                        Evaluator evaluator = _selectedState.Evaluators[RowIndex(row)];
+                        row.Q<VisualElement>("Score").style.width =
+                            Length.Percent(total > 0f ? Mathf.Clamp01(evaluator.LastScore * evaluator.Weight / total) * 100f : 0f);
+                    }
+                }
+                if (_selectedConsiderationSet != null && _agent != null) {
+                    foreach (VisualElement row in Rows(_considerationsListView, _selectedConsiderationSet.Considerations.Count)) {
+                        string name = _selectedConsiderationSet.Considerations[RowIndex(row)].Name;
+                        row.Q<Label>("LabelRuntimeValue").style.visibility = Visibility.Visible;
+                        row.Q<Label>("LabelRuntimeValueValue").style.visibility = Visibility.Visible;
+                        row.Q<Label>("LabelRuntimeValueValue").text =
+                            _agent.GetConsideration(_selectedConsiderationSet.Name, name).ToString("F2", CultureInfo.InvariantCulture);
+                    }
                 }
             }
-            if (_selectedConsiderationSet != null && _designer.Agent != null) {
-                foreach (VisualElement row in Rows(_considerationsListView, _selectedConsiderationSet.Considerations.Count)) {
-                    string name = _selectedConsiderationSet.Considerations[RowIndex(row)].Name;
-                    row.Q<Label>("LabelRuntimeValue").style.visibility = Visibility.Visible;
-                    row.Q<Label>("LabelRuntimeValueValue").style.visibility = Visibility.Visible;
-                    row.Q<Label>("LabelRuntimeValueValue").text =
-                        _designer.Agent.GetConsideration(_selectedConsiderationSet.Name, name).ToString("F2", CultureInfo.InvariantCulture);
-                }
+        }
+
+        // The menu of the offered agents again when the list changed; nothing shown when the shown one was taken back.
+        private void RefreshOffers() {
+            if (OfferedAgents.Version == _offersVersion) {
+                return;
+            }
+            _offersVersion = OfferedAgents.Version;
+            OfferedAgents.Offer[] offers = OfferedAgents.All();
+            _menuAgents.menu.ClearItems();
+            foreach (OfferedAgents.Offer offer in offers) {
+                _menuAgents.menu.AppendAction(offer.Name, _ => Target(null, offer),
+                    _ => offer == _offer ? DropdownMenuAction.Status.Checked : DropdownMenuAction.Status.Normal);
+            }
+            _menuAgents.style.display = offers.Length > 0 ? DisplayStyle.Flex : DisplayStyle.None;
+            if (_offer != null && !offers.Contains(_offer)) {
+                Target(null);
             }
         }
     }
