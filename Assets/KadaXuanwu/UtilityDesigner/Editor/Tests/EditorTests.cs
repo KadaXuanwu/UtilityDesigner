@@ -6,6 +6,15 @@ using UnityEditor;
 using UnityEngine;
 
 namespace KadaXuanwu.UtilityDesigner.Editor.Tests {
+    // The threaded demo's CountMeal, which this assembly cannot reach.
+    public sealed class Meal : ActionNode {
+        protected override NodeState OnUpdate() {
+            Agent.Blackboard.Set("Meals", Agent.Blackboard.Get("Meals", 0) + 1);
+            Agent.Blackboard.Set("Last meal", (float)Agent.Now);
+            return NodeState.Success;
+        }
+    }
+
     public sealed class EditorTests {
         private const string Demos = "Assets/KadaXuanwu/UtilityDesigner/Demos";
 
@@ -63,6 +72,35 @@ namespace KadaXuanwu.UtilityDesigner.Editor.Tests {
             agent.Evaluate(3.0);
             agent.Evaluate(4.0);
             Assert.That(UtilityDesignerEditorWindow.Decisions(agent.Trace, 8), Is.Empty);
+        }
+
+        // As the threaded demo: ticked on a worker thread under its gate, read by the window under the same gate.
+        [Test]
+        public void TheWindowShowsTheBlackboardOfAnAgentTickedOffTheMainThread() {
+            Design design = new Design { Name = "D" };
+            design.BlackboardKeys.Add(new BlackboardKey { Name = "Stand", Type = BlackboardType.Vector });
+            design.BlackboardKeys.Add(new BlackboardKey { Name = "Meals", Type = BlackboardType.WholeNumber });
+            design.BlackboardKeys.Add(new BlackboardKey { Name = "Last meal", Type = BlackboardType.Number });
+            design.StateSets.Add(new StateSet {
+                Name = "Main", States = { new State { Name = "Eat", BaseScore = 1f, Tree = new Repeat { Child = new Meal() } } },
+            });
+            Agent agent = new Agent(design, new Globals(), new Rng(1));
+            object gate = new object();
+            Assert.That(UtilityDesignerEditorWindow.BlackboardValues(agent), Is.EqualTo(new[] { "none", "none", "none" }));
+            System.Threading.Thread worker = new System.Threading.Thread(() => {
+                for (int i = 1; i <= 3; i++) {
+                    lock (gate) {
+                        agent.Evaluate(i * 0.5);
+                        agent.Execute(i * 0.5);
+                        agent.Blackboard.Set("Stand", new Vector3(1f, 2f, 3f));
+                    }
+                }
+            });
+            worker.Start();
+            worker.Join();
+            lock (gate) {
+                Assert.That(UtilityDesignerEditorWindow.BlackboardValues(agent), Is.EqualTo(new[] { "(1, 2, 3)", "3", "1.5" }));
+            }
         }
 
         [Test]

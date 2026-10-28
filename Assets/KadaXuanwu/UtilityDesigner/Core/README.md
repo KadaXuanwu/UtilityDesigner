@@ -21,6 +21,9 @@ plumbing differs: the caller owns the clock and the random numbers, and a design
   Step).
 - `Designs`: versioned JSON, every tunable number as a `Parameter` (an optimizer's vector), override layers. A
   number's id is its names (`states.Day.Eat.Hunger.weight`): keep the names in one state different.
+- `Blackboard`: beyond v1, each agent's named values that its nodes and the game share (`Agent.Blackboard`). The
+  design declares the keys (`Design.BlackboardKeys`: a name and a `BlackboardType`), which save in the JSON; the values
+  do not, and start as none. A key is bound once to its index (`Blackboard.Bind`).
 - `Trace`: the last evaluations, every state's score, as JSON lines; `Agent.WriteLog` writes v1's log entry.
 - `OfferedAgents`: the agents the game offers to a viewer (the Utility Designer window) by a name, each with the lock
   it is ticked under; safe from any thread.

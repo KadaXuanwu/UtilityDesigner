@@ -23,4 +23,10 @@ namespace KadaXuanwu.UtilityDesigner.Runtime {
             Label = label;
         }
     }
+
+    // On a node's string field: the name of a key of the design's blackboard. The editor shows it as a dropdown of the
+    // keys.
+    [AttributeUsage(AttributeTargets.Field)]
+    public sealed class KeyNameAttribute : Attribute {
+    }
 }

@@ -68,6 +68,48 @@ environmentConsiderations.SetConsideration("Bears nearby", 1);              // a
 GetComponent<UtilityDesigner>().Agent.ChangeConsideration("UD James", "Food", 2);
 ```
 
+## Blackboard
+
+Beyond v1: named values that the nodes of an agent's trees share. A step writes a value, a later step reads it. Declare
+the keys in the window's Blackboard list, under the states: a name and a type each (Number, Whole Number, Boolean, Text,
+Vector, Object: anything the game gives). Only the keys save with the behaviour; every value starts as none. In play,
+the list shows each value. A behaviour without keys runs as before.
+
+```csharp
+public class FindStand : ActionNode {
+    [KeyName] public string Stand = "";   // a dropdown of the blackboard's keys
+    private int _stand;
+
+    protected override void OnAwake() => _stand = Agent.Blackboard.Bind(Stand);   // found once, not each tick
+
+    protected override NodeState OnUpdate() =>
+        Agent.Blackboard.Set(_stand, UtilityDesigner.Of(Agent).transform.position + Vector3.forward) ? NodeState.Success : NodeState.Failure;
+}
+
+public class WalkToStand : MoveNode {
+    [KeyName] public string Stand = "";
+    private int _stand;
+
+    protected override void OnAwake() {
+        base.OnAwake();
+        _stand = Agent.Blackboard.Bind(Stand);
+    }
+
+    protected override NodeState OnUpdate() {
+        if (!Agent.Blackboard.Has(_stand)) {
+            return NodeState.Failure;                         // nothing found yet: none
+        }
+        NavMeshAgent.SetDestination(Agent.Blackboard.Get<Vector3>(_stand));
+        return NavMeshAgent.remainingDistance > NavMeshAgent.stoppingDistance ? NodeState.Running : NodeState.Success;
+    }
+}
+```
+
+Game code reaches the same values: `agent.Blackboard.Set("Target", enemy)`, `agent.Blackboard.Get<int>("Arrows")`.
+`Set` refuses a value of another type than its key's (a Number takes a `float`, a Whole Number an `int`; a Vector any
+struct of three floats) and a key the design does not declare; `null` makes a value none again. `Get` gives the
+fallback for none, a missing key or another type.
+
 ## Agents without a component
 
 An agent that game code runs itself (a plain C# simulation, a worker thread) can be shown in the window too. Offer it
@@ -104,7 +146,8 @@ public class Shout : ActionNode {
 }
 ```
 
-`Agent` is the running agent: its clock (`Now`), its seeded random numbers (`Random`), its considerations and its lock.
+`Agent` is the running agent: its clock (`Now`), its seeded random numbers (`Random`), its considerations, its blackboard
+(`Blackboard`) and its lock.
 A node class that only a behaviour names needs `[Preserve]` in builds with high code stripping.
 
 I fully own this asset. Feel free to use and change this code for your own project or to create pull requests. Please do
