@@ -1074,6 +1074,18 @@ namespace KadaXuanwu.UtilityDesigner.Tests {
             Assert.That(Designs.ToJson(plain), Is.EqualTo(Designs.ToJson(design)));
         }
 
+        [Test]
+        public void DifferenceMatchesNumbersByIdAfterALinkIsAdded() {
+            Design plain = Villager.Design();
+            Design grown = Villager.Design();
+            State eat = grown.StateSets[0].States[0];
+            eat.Evaluators.Insert(0, new Evaluator { Name = "Tired", Consideration = "Needs | Energy", Weight = 0.5f, Curve = Curve.Logistic(8f, 0.5f) });
+            grown.StateSets[0].States[3].FailChance = 0.75f;
+
+            Assert.That(((Dictionary<string, object>)Json.Parse(Designs.Difference(plain, grown))).Keys, Is.EquivalentTo(new[] { "states.Day.Wander.failChance" }));
+            Assert.That(((Dictionary<string, object>)Json.Parse(Designs.Difference(grown, plain))).Keys, Is.EquivalentTo(new[] { "states.Day.Wander.failChance" }), "and after a link is removed");
+        }
+
         // What a search does to a design: links added and removed, numbers moved. The result is a design like any other.
         [Test]
         public void ADesignEditedByAProgramRunsAndSurvivesJson() {

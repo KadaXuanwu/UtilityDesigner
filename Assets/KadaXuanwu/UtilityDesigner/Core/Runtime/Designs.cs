@@ -298,14 +298,17 @@ namespace KadaXuanwu.UtilityDesigner.Core {
             }
         }
 
-        // The layer that turns from into to: every number that differs.
+        // The layer that turns from into to: every number in both, matched by id, that differs. A number only one has
+        // (a link added or removed) is not in it.
         public static string Difference(Design from, Design to) {
-            List<Parameter> before = Parameters(from);
-            List<Parameter> after = Parameters(to);
+            Dictionary<string, float> before = new Dictionary<string, float>();
+            foreach (Parameter parameter in Parameters(from)) {
+                before[parameter.Id] = parameter.Get();
+            }
             Dictionary<string, object> layer = new Dictionary<string, object>();
-            for (int i = 0; i < before.Count && i < after.Count; i++) {
-                if (before[i].Id == after[i].Id && before[i].Get() != after[i].Get()) {
-                    layer[after[i].Id] = (double)after[i].Get();
+            foreach (Parameter parameter in Parameters(to)) {
+                if (before.TryGetValue(parameter.Id, out float value) && value != parameter.Get()) {
+                    layer[parameter.Id] = (double)parameter.Get();
                 }
             }
             return Json.Write(layer);
