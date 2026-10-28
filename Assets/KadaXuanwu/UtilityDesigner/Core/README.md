@@ -10,7 +10,8 @@ plumbing differs: the caller owns the clock and the random numbers, and a design
 - `Agent`: one agent running a design. `Evaluate(now)` moves the considerations on and chooses the state by v1's
   score, `Weight · (BaseScore + Σ Score · EvalWeight / TotalEvalWeights)`, times the execution factor while it runs,
   held to its min and max; fail chances drawn from the `Rng` the caller passes in. `Execute(now)` ticks the chosen
-  state's tree.
+  state's tree. Three settings beyond v1, each off by default: `Design.ChooseAgainWhenTreeEnds`,
+  `Design.InstantChildren`, and `Repeat`'s `Count` and `Until` (the project README, Beyond v1).
 - `Node`: v1's nodes that need no engine (`Sequence`, `Selector`, `Parallel`, `RandomSelector`, `RandomSequence`,
   `Invert`, `Repeat`, `Success`, `Failure`, `WaitFixed`, `WaitRandom`, `LockState`, `LockStateDuration`,
   `LockStateConsideration`, `UnlockState`, `ChangeStateSet`, `SetConsideration`, `ChangeConsideration`,

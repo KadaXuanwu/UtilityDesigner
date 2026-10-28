@@ -60,6 +60,8 @@ namespace KadaXuanwu.UtilityDesigner.Editor {
         private Button _buttonEvaluation;
         private Button _buttonExecution;
         private TextField _textFieldFileName;
+        private ToolbarToggle _toggleChooseAgain;
+        private ToolbarToggle _toggleInstantChildren;
         private ToolbarMenu _menuStateSets;
         private Toggle _toggleStateActive;
         private TextField _textFieldStateName;
@@ -153,6 +155,10 @@ namespace KadaXuanwu.UtilityDesigner.Editor {
             _buttonEvaluation = root.Q<Button>("ButtonEvaluation");
             _buttonExecution = root.Q<Button>("ButtonExecution");
             _textFieldFileName = root.Q<TextField>("TextFieldFileName");
+            _toggleChooseAgain = root.Q<ToolbarToggle>("ToggleChooseAgain");
+            _toggleChooseAgain.RegisterValueChangedCallback(evt => _design.ChooseAgainWhenTreeEnds = evt.newValue);
+            _toggleInstantChildren = root.Q<ToolbarToggle>("ToggleInstantChildren");
+            _toggleInstantChildren.RegisterValueChangedCallback(evt => _design.InstantChildren = evt.newValue);
             _menuStateSets = root.Q<ToolbarMenu>("MenuStateSets");
             _toggleStateActive = root.Q<Toggle>("ToggleStateActive");
             _textFieldStateName = root.Q<TextField>("TextFieldStateName");
@@ -231,6 +237,10 @@ namespace KadaXuanwu.UtilityDesigner.Editor {
             if (SceneReferences != null && !Application.isPlaying) {
                 SceneReferences.Initialize();
             }
+            _toggleChooseAgain.SetValueWithoutNotify(_design.ChooseAgainWhenTreeEnds);
+            _toggleChooseAgain.SetEnabled(!ReadOnly);
+            _toggleInstantChildren.SetValueWithoutNotify(_design.InstantChildren);
+            _toggleInstantChildren.SetEnabled(!ReadOnly);
             _textFieldFileName.value = offer != null ? offer.Name : _loadedFrom != null ? _loadedFrom.name : _design.Name;
             rootVisualElement.Q<Button>("ButtonSave").SetEnabled(!Application.isPlaying);
             rootVisualElement.Q<Button>("ButtonLoad").SetEnabled(!Application.isPlaying);

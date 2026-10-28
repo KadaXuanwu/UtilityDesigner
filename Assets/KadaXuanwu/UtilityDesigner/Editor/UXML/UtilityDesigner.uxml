@@ -24,6 +24,8 @@
                 <uie:ToolbarButton text="Evaluation" display-tooltip-when-elided="true" name="ButtonEvaluation" tooltip="Display the Evaluation tab." class="toolbarButton" style="width: 100px;" />
                 <uie:ToolbarButton text="Execution" display-tooltip-when-elided="true" name="ButtonExecution" tooltip="Display the Execution tab." class="toolbarButton" style="width: 100px;" />
                 <uie:ToolbarSpacer name="Spacer" style="width: auto; flex-grow: 1;" />
+                <uie:ToolbarToggle text="Choose Again" name="ToggleChooseAgain" tooltip="When the running state's tree ends, evaluate at once, in the same tick: a state that wins again starts its tree again. Off: as v1, the agent waits until another state is chosen." />
+                <uie:ToolbarToggle text="Instant Children" name="ToggleInstantChildren" tooltip="A Sequence or Selector goes on to its next child in the same tick when a child ends at once. Off: as v1, one child a tick." />
                 <ui:TextField picking-mode="Ignore" focusable="true" name="TextFieldFileName" tooltip="Name of the current Utility Behaviour." style="min-width: 100px;" />
                 <uie:ToolbarButton text="Save" display-tooltip-when-elided="true" name="ButtonSave" tooltip="Save the Utility Behaviour. Saves automatically on close once a Utility Behaviour is linked." class="toolbarButton" style="width: 50px;" />
                 <uie:ToolbarButton text="Load" display-tooltip-when-elided="true" name="ButtonLoad" tooltip="Load a Utility Behaviour. OVERRIDES everything if not saved." class="toolbarButton" style="width: 50px;" />

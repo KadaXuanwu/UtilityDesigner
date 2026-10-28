@@ -149,6 +149,8 @@
                     "id": "6fd1babddc0022a47bcba636f6954609",
                     "x": 375,
                     "y": 334,
+                    "count": 0,
+                    "until": "None",
                     "child": {
                       "type": "Sequence",
                       "id": "b4e8fbee9209133419e2386994717051",
@@ -335,6 +337,8 @@
             "id": "d3f4951473ae62a4cb26fbe3540cc0b9",
             "x": 375,
             "y": 83,
+            "count": 0,
+            "until": "None",
             "child": {
               "type": "Sequence",
               "id": "80da377274a648a4187863bed438b8c8",
@@ -461,6 +465,8 @@
                     "id": "7f0a5c6c97e10274b861242724af9898",
                     "x": 375,
                     "y": 327,
+                    "count": 0,
+                    "until": "None",
                     "child": {
                       "type": "Sequence",
                       "id": "f8f43e4b018d5244dbc88592d776502c",
@@ -610,6 +616,8 @@
                     "id": "7f0a5c6c97e10274b861242724af9898",
                     "x": 375,
                     "y": 327,
+                    "count": 0,
+                    "until": "None",
                     "child": {
                       "type": "Sequence",
                       "id": "f8f43e4b018d5244dbc88592d776502c",
@@ -790,6 +798,8 @@
                     "id": "7f0a5c6c97e10274b861242724af9898",
                     "x": 375,
                     "y": 327,
+                    "count": 0,
+                    "until": "None",
                     "child": {
                       "type": "Sequence",
                       "id": "f8f43e4b018d5244dbc88592d776502c",
@@ -974,6 +984,8 @@
             "id": "206a02b005d7a2b4d8fe5878dabf6b87",
             "x": 375,
             "y": 81,
+            "count": 0,
+            "until": "None",
             "child": {
               "type": "Selector",
               "id": "91a73bd8aa85aab45a1a4b9ef827305b",

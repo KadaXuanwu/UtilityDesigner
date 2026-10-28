@@ -40,6 +40,23 @@ Everything is under `Assets/KadaXuanwu/UtilityDesigner`:
 4. Play. The window shows the selected agent's scores, consideration values and running nodes, and under the states
    its last decisions: when it took up a state, at which score, and the best state it left.
 
+### Beyond v1
+
+Three settings change v1's behaviour. Each is off by default, so a design without them decides and runs as v1 does.
+
+- **Choose Again** (the window's toolbar; `Design.ChooseAgainWhenTreeEnds`): when the running state's tree ends with
+  success or failure, the agent evaluates at once, in the same execution tick, and ticks the state it chooses. If the
+  same state wins again, its tree starts again. In v1, a finished tree leaves the agent idle while its state stays the
+  best.
+- **Instant Children** (the window's toolbar; `Design.InstantChildren`): a Sequence or Selector (and their random
+  kinds) goes on to its next child in the same tick when a child ends at once, until a child is still running or the
+  node ends. In v1, five instant nodes take five ticks.
+- **Repeat's Count and Until** (on the node): Count is how many times the child runs (0: forever, as v1); Until ends it
+  early when the child ends with that result (None: as v1). Once it ends, Repeat returns its child's result.
+
+Both design settings stop at `Design.MaxInstantSteps` (64) restarts, or children of one node, in one tick: a tree that
+ends at once every time cannot hang the game. The rest waits for the next tick.
+
 The component ticks on game time, so a paused game stops deciding. Its Seed makes a run repeat; 0 takes another seed
 every run.
 
