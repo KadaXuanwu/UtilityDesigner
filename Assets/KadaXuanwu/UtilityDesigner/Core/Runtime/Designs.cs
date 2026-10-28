@@ -160,6 +160,13 @@ namespace KadaXuanwu.UtilityDesigner.Core {
             if (design.InstantChildren) {
                 root["instantChildren"] = true;
             }
+            if (design.BlackboardKeys.Count > 0) {
+                List<object> keys = new List<object>();
+                foreach (BlackboardKey key in design.BlackboardKeys) {
+                    keys.Add(new Dictionary<string, object> { ["name"] = key.Name, ["type"] = key.Type.ToString() });
+                }
+                root["blackboard"] = keys;
+            }
             root["considerationSets"] = considerationSets;
             root["stateSets"] = stateSets;
             return Json.Write(root);
@@ -175,6 +182,10 @@ namespace KadaXuanwu.UtilityDesigner.Core {
                 Name = Text(root, "name"), ChooseAgainWhenTreeEnds = Flag(root, "chooseAgainWhenTreeEnds", false),
                 InstantChildren = Flag(root, "instantChildren", false),
             };
+            foreach (object item in List(root, "blackboard")) {
+                Dictionary<string, object> key = (Dictionary<string, object>)item;
+                design.BlackboardKeys.Add(new BlackboardKey { Name = Text(key, "name"), Type = (BlackboardType)Enum.Parse(typeof(BlackboardType), Text(key, "type")) });
+            }
             foreach (object item in List(root, "considerationSets")) {
                 Dictionary<string, object> map = (Dictionary<string, object>)item;
                 ConsiderationSet set = new ConsiderationSet { Name = Text(map, "name"), Local = Flag(map, "local", false) };

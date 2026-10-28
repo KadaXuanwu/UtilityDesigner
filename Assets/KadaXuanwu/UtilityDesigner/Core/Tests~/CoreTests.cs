@@ -1114,6 +1114,135 @@ namespace KadaXuanwu.UtilityDesigner.Tests {
         }
     }
 
+    // The README's example: one node finds a stand and writes it, a later one reads it.
+    public sealed class FindStand : ActionNode {
+        public string Key = "";
+        private int _key;
+
+        protected override void OnAwake() => _key = Agent.Blackboard.Bind(Key);
+
+        protected override NodeState OnUpdate() =>
+            Agent.Blackboard.Set(_key, new System.Numerics.Vector3(4f, 0f, -2.5f)) ? NodeState.Success : NodeState.Failure;
+    }
+
+    public sealed class WalkToStand : ActionNode {
+        public string Key = "";
+        public System.Numerics.Vector3 Reached;
+        private int _key;
+
+        protected override void OnAwake() => _key = Agent.Blackboard.Bind(Key);
+
+        protected override NodeState OnUpdate() {
+            if (!Agent.Blackboard.Has(_key)) {
+                return NodeState.Failure;
+            }
+            Reached = Agent.Blackboard.Get<System.Numerics.Vector3>(_key);
+            return NodeState.Success;
+        }
+    }
+
+    public sealed class BlackboardTests {
+        private struct Engine3 {
+            public float x, y, z;
+        }
+
+        private static Bench Keys(params (string, BlackboardType)[] keys) {
+            Bench bench = new Bench();
+            foreach ((string name, BlackboardType type) in keys) {
+                bench.Design.BlackboardKeys.Add(new BlackboardKey { Name = name, Type = type });
+            }
+            bench.State("State");
+            return bench;
+        }
+
+        [Test]
+        public void EveryKeyReadsNoneUntilWrittenAndTakesOnlyItsType() {
+            Bench bench = Keys(("Speed", BlackboardType.Number), ("Arrows", BlackboardType.WholeNumber), ("Seen", BlackboardType.Boolean),
+                ("Name", BlackboardType.Text), ("Stand", BlackboardType.Vector), ("Target", BlackboardType.Object));
+            Blackboard board = bench.Agent().Blackboard;
+            Assert.That(board.Count, Is.EqualTo(6));
+            for (int key = 0; key < board.Count; key++) {
+                Assert.That((board.Has(key), board.Get(key), board.Text(key)), Is.EqualTo((false, (object)null, Blackboard.None)), board.Key(key).Name);
+            }
+            Assert.That(board.Get("Arrows", 7), Is.EqualTo(7), "the fallback while none");
+
+            Assert.That(board.Set("Speed", 2.5f), Is.True);
+            Assert.That(board.Set("Speed", 3), Is.False, "an int is not a number key's float");
+            Assert.That(board.Set("Arrows", 12), Is.True);
+            Assert.That(board.Set("Seen", true), Is.True);
+            Assert.That(board.Set("Name", "Gate"), Is.True);
+            Assert.That(board.Set("Stand", new System.Numerics.Vector3(1f, 2f, 3.25f)), Is.True);
+            Assert.That(board.Set("Stand", "north"), Is.False);
+            Assert.That(board.Set("Target", new List<int> { 1 }), Is.True, "any object");
+
+            int speed = board.Bind("Speed");
+            Assert.That(board.Get<float>(speed), Is.EqualTo(2.5f));
+            Assert.That(board.Get(speed, "text"), Is.EqualTo("text"), "another type reads the fallback");
+            Assert.That(board.Get<int>("Arrows"), Is.EqualTo(12));
+            Assert.That(Enumerable.Range(0, board.Count).Select(board.Text),
+                Is.EqualTo(new[] { "2.5", "12", "true", "Gate", "(1, 2, 3.25)", "System.Collections.Generic.List`1[System.Int32]" }));
+
+            // An engine's vector: any struct of three floats.
+            Assert.That(board.Set("Stand", new Engine3 { x = -1f, y = 0.5f, z = 9f }), Is.True);
+            Assert.That(board.Text(board.Bind("Stand")), Is.EqualTo("(-1, 0.5, 9)"));
+
+            Assert.That(board.Set(speed, null), Is.True);
+            Assert.That((board.Has(speed), board.Text(speed)), Is.EqualTo((false, Blackboard.None)), "null makes it none again");
+        }
+
+        [Test]
+        public void AKeyTheDesignDoesNotDeclareIsNotThere() {
+            Blackboard board = Keys(("Stand", BlackboardType.Vector)).Agent().Blackboard;
+            Assert.That(board.Bind("Elsewhere"), Is.EqualTo(Blackboard.NoKey));
+            Assert.That(board.Set("Elsewhere", 1f), Is.False);
+            Assert.That((board.Has(Blackboard.NoKey), board.Get(Blackboard.NoKey), board.Get("Elsewhere", 4f)), Is.EqualTo((false, (object)null, 4f)));
+        }
+
+        [Test]
+        public void ANodeWritesAValueALaterNodeReads() {
+            NodeTypes.Register<FindStand>();
+            NodeTypes.Register<WalkToStand>();
+            Bench bench = Keys(("Stand", BlackboardType.Vector));
+            WalkToStand walk = new WalkToStand { Key = "Stand" };
+            Sequence sequence = new Sequence();
+            sequence.Nodes.Add(new FindStand { Key = "Stand" });
+            sequence.Nodes.Add(walk);
+            bench.Set.States[0].Tree = sequence;
+            bench.Design.InstantChildren = true;
+            Agent agent = bench.Agent();
+            agent.Evaluate(0.0);
+            agent.Execute(0.0);
+            Assert.That(agent.ExecutingState.TreeState, Is.EqualTo(NodeState.Success));
+            Assert.That(walk.Reached, Is.EqualTo(new System.Numerics.Vector3(4f, 0f, -2.5f)));
+        }
+
+        [Test]
+        public void ADesignWithoutABlackboardLoadsAndRunsAsBefore() {
+            Bench bench = new Bench();
+            bench.Value("a", 0.5f);
+            bench.State("State", "a");
+            string json = Designs.ToJson(bench.Design);
+            Assert.That(json, Does.Not.Contain("blackboard"), "saves as before");
+            Agent agent = new Agent(Designs.FromJson(json), null, new Rng(1));
+            Assert.That((agent.Design.BlackboardKeys.Count, agent.Blackboard.Count, agent.Blackboard.Bind("a")), Is.EqualTo((0, 0, Blackboard.NoKey)));
+            agent.Evaluate(0.0);
+            Assert.That(agent.ExecutingState.LastScore, Is.EqualTo(0.5f));
+        }
+
+        [Test]
+        public void TheKeysSurviveJsonAndTheValuesDoNot() {
+            Bench bench = Keys(("Stand", BlackboardType.Vector), ("Arrows", BlackboardType.WholeNumber), ("Target", BlackboardType.Object));
+            bench.Agent().Blackboard.Set("Arrows", 3);
+            string json = Designs.ToJson(bench.Design);
+            Assert.That(json, Does.Contain("\"blackboard\""));
+            Design back = Designs.FromJson(json);
+            Assert.That(Designs.ToJson(back), Is.EqualTo(json));
+            Assert.That(back.BlackboardKeys.Select(key => (key.Name, key.Type)),
+                Is.EqualTo(new[] { ("Stand", BlackboardType.Vector), ("Arrows", BlackboardType.WholeNumber), ("Target", BlackboardType.Object) }));
+            Assert.That(new Agent(back, null, new Rng(1)).Blackboard.Has(1), Is.False);
+        }
+    }
+
     public sealed class RunTests {
         [Test]
         public void TheSameSeedLivesTheSameDay() {

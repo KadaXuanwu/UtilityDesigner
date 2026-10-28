@@ -33,6 +33,8 @@ namespace KadaXuanwu.UtilityDesigner.Core {
         public readonly object Owner;
         // Every evaluation, if set.
         public Trace Trace;
+        // The values of the design's blackboard keys, this agent's own.
+        public readonly Blackboard Blackboard;
 
         private readonly ConsiderationSet[] _sets;
         private readonly int[] _firstSlot;
@@ -68,6 +70,7 @@ namespace KadaXuanwu.UtilityDesigner.Core {
             Random = random;
             Owner = owner;
             Now = now;
+            Blackboard = new Blackboard(design.BlackboardKeys);
             globals = globals ?? new Globals();
             _sets = new ConsiderationSet[design.ConsiderationSets.Count];
             _firstSlot = new int[_sets.Length];
