@@ -81,6 +81,10 @@ namespace KadaXuanwu.UtilityDesigner.Editor {
         private ListView _considerationsListView;
         private BehaviourTreeView _treeView;
         private Label _decisions;
+        // The design's blackboard keys, and their values in play.
+        private VisualElement _blackboardRows;
+        private readonly List<Label> _blackboardValues = new List<Label>();
+        private Button _buttonAddKey;
         private VisualElement _inspectorContent;
         private Label _labelNodeDescription;
         private ToolbarMenu _menuAgents;
@@ -199,6 +203,7 @@ namespace KadaXuanwu.UtilityDesigner.Editor {
             _decisions.style.whiteSpace = WhiteSpace.Normal;
             _decisions.style.marginLeft = _decisions.style.marginBottom = 5;
             root.Q<VisualElement>("StatesContainer").Add(_decisions);
+            root.Q<VisualElement>("StateSetsTab").Add(BlackboardSection());
             _preconditionsListView = PreconditionsList(Template("TemplateItemPrecondition"));
             root.Q<VisualElement>("PreconditionsContent").Add(_preconditionsListView);
             _evaluatorsListView = EvaluatorsList(Template("TemplateItemEvaluator"));
@@ -253,7 +258,63 @@ namespace KadaXuanwu.UtilityDesigner.Editor {
             _decisions.style.display = Application.isPlaying ? DisplayStyle.Flex : DisplayStyle.None;
             SelectStateSet(stateSetIndex, stateIndex);
             RefreshConsiderationSets();
+            RefreshBlackboard();
         }
+
+        // Under the states: the blackboard's keys, a name and a type each, edited outside play; in play, each key's value.
+        private VisualElement BlackboardSection() {
+            VisualElement section = new VisualElement { name = "BlackboardContainer", style = { flexShrink = 0, maxHeight = 200 } };
+            VisualElement header = new VisualElement();
+            header.AddToClassList("header");
+            Label title = new Label("Blackboard") { tooltip = "Named values that the nodes of the agent's trees share. Only the keys save; every value starts as none." };
+            title.AddToClassList("subtitle");
+            header.Add(title);
+            header.Add(new VisualElement { style = { flexGrow = 1 } });
+            _buttonAddKey = new Button(() => {
+                _design.BlackboardKeys.Add(new BlackboardKey { Name = $"Key {_design.BlackboardKeys.Count + 1}" });
+                RefreshBlackboard();
+            }) { text = "+", tooltip = "Add a key." };
+            _buttonAddKey.AddToClassList("buttonAddRemove");
+            header.Add(_buttonAddKey);
+            section.Add(header);
+            _blackboardRows = new ScrollView();
+            section.Add(_blackboardRows);
+            return section;
+        }
+
+        private void RefreshBlackboard() {
+            _blackboardRows.Clear();
+            _blackboardValues.Clear();
+            // In play the agent's values are bound to the keys it started with.
+            bool editable = !Application.isPlaying;
+            _buttonAddKey.SetEnabled(editable);
+            foreach (BlackboardKey key in _design.BlackboardKeys) {
+                VisualElement row = new VisualElement { style = { flexDirection = FlexDirection.Row } };
+                TextField name = new TextField { value = key.Name, style = { flexGrow = 1, flexBasis = 0 } };
+                name.RegisterValueChangedCallback(evt => key.Name = evt.newValue ?? "");
+                EnumField type = new EnumField(key.Type) { style = { width = 90 } };
+                type.RegisterValueChangedCallback(evt => key.Type = (BlackboardType)evt.newValue);
+                name.SetEnabled(editable);
+                type.SetEnabled(editable);
+                row.Add(name);
+                row.Add(type);
+                if (editable) {
+                    row.Add(new Button(() => {
+                        _design.BlackboardKeys.Remove(key);
+                        RefreshBlackboard();
+                    }) { text = "-", tooltip = "Remove the key." });
+                } else {
+                    Label value = new Label(Blackboard.None) { style = { width = 80, unityTextAlign = TextAnchor.MiddleLeft } };
+                    _blackboardValues.Add(value);
+                    row.Add(value);
+                }
+                _blackboardRows.Add(row);
+            }
+        }
+
+        // Each key's value as the window shows it. Read while holding the agent's gate.
+        internal static List<string> BlackboardValues(Agent agent) =>
+            Enumerable.Range(0, agent.Blackboard.Count).Select(agent.Blackboard.Text).ToList();
 
         // The last decisions a trace kept, newest first: when the agent took up another state, that state's score, and
         // the best of the states it could have chosen instead.
@@ -859,6 +920,14 @@ namespace KadaXuanwu.UtilityDesigner.Editor {
                     if (SceneReferences != null) {
                         DrawSceneRef(view, field, sceneRef);
                     }
+                } else if (type == typeof(string) && field.GetCustomAttribute<KeyNameAttribute>() != null) {
+                    DropdownField key = new DropdownField(label) { choices = _design.BlackboardKeys.Select(k => k.Name).ToList() };
+                    key.SetValueWithoutNotify((string)field.GetValue(node));
+                    key.RegisterValueChangedCallback(evt => {
+                        field.SetValue(node, evt.newValue ?? "");
+                        view.UpdateDetails();
+                    });
+                    _inspectorContent.Add(key);
                 } else if (node is ChangeStateSet && field.Name == nameof(ChangeStateSet.StateSetIndex)) {
                     DrawIndex(view, field, "State Set", _design.StateSets.Select(set => set.Name).ToList());
                 } else if (type == typeof(int)) {
@@ -974,6 +1043,11 @@ namespace KadaXuanwu.UtilityDesigner.Editor {
             lock (Gate) {
                 if (_agent.Trace != null) {
                     _decisions.text = Decisions(_agent.Trace, 8);
+                }
+                List<string> values = BlackboardValues(_agent);
+                for (int i = 0; i < _blackboardValues.Count && i < values.Count; i++) {
+                    _blackboardValues[i].text = values[i];
+                    _blackboardValues[i].tooltip = values[i];
                 }
                 List<State> states = StateSet.States;
                 float highest = states.Select(state => state.LastScore).Prepend(0f).Max();

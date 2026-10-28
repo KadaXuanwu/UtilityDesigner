@@ -171,6 +171,8 @@ namespace KadaXuanwu.UtilityDesigner.Core {
         public bool InstantChildren;
         public List<ConsiderationSet> ConsiderationSets = new List<ConsiderationSet>();
         public List<StateSet> StateSets = new List<StateSet>();
+        // Beyond v1: the keys of the agent's blackboard, in the order the window lists them.
+        public List<BlackboardKey> BlackboardKeys = new List<BlackboardKey>();
 
         internal Agent Owner;
     }

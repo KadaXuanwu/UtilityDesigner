@@ -1,11 +1,13 @@
 using System.Diagnostics;
 using System.Threading;
 using KadaXuanwu.UtilityDesigner.Core;
+using KadaXuanwu.UtilityDesigner.Runtime;
 using UnityEngine;
 
 namespace KadaXuanwu.UtilityDesigner.Demos.Threaded {
     // Agents that no component runs, ticked on a worker thread and offered to the Utility Designer window: add this to
-    // any GameObject, play, and pick a villager from the window's Offered agents menu.
+    // any GameObject, play, and pick a villager from the window's Offered agents menu. Its Blackboard shows the meals it
+    // counted and when it last ate, written on the worker thread.
     public class ThreadedVillagers : MonoBehaviour {
         [SerializeField] private int villagers = 3;
 
@@ -52,6 +54,8 @@ namespace KadaXuanwu.UtilityDesigner.Demos.Threaded {
         // Hungry and tired by turns: it eats, sleeps or works.
         private static Design Design() {
             Design design = new Design { Name = "Villager" };
+            design.BlackboardKeys.Add(new BlackboardKey { Name = "Meals", Type = BlackboardType.WholeNumber });
+            design.BlackboardKeys.Add(new BlackboardKey { Name = "Last meal", Type = BlackboardType.Number });
             design.ConsiderationSets.Add(new ConsiderationSet {
                 Name = "Needs", Local = true, Considerations = {
                     new Consideration { Name = "Hunger", InitialValue = 0.3f, SetMinValue = true, SetMaxValue = true, MaxValue = 1f, ChangePerSecond = 0.1f },
@@ -65,6 +69,8 @@ namespace KadaXuanwu.UtilityDesigner.Demos.Threaded {
                 Evaluators = { Need("Hunger", "Needs | Hunger", Curve.Logistic(10f)) },
                 Tree = Sequence(
                     new WaitFixed { Duration = 2f },
+                    // Before the reset: with Hunger at 0 the next evaluation already chooses another state.
+                    new CountMeal { Count = "Meals", Time = "Last meal" },
                     new SetConsideration { ConsiderationSetName = "Needs", ConsiderationName = "Hunger", NewValue = 0f }),
             });
             day.States.Add(new State {
@@ -100,6 +106,28 @@ namespace KadaXuanwu.UtilityDesigner.Demos.Threaded {
             Sequence sequence = new Sequence();
             sequence.Nodes.AddRange(nodes);
             return sequence;
+        }
+    }
+
+    // Counts a meal on the blackboard and keeps its time.
+    public class CountMeal : ActionNode {
+        [KeyName] public string Count = "";
+        [KeyName] public string Time = "";
+
+        private int _count;
+        private int _time;
+
+        public override string Description => "Adds one to the Count key and writes the clock to the Time key.";
+
+        protected override void OnAwake() {
+            _count = Agent.Blackboard.Bind(Count);
+            _time = Agent.Blackboard.Bind(Time);
+        }
+
+        protected override NodeState OnUpdate() {
+            Agent.Blackboard.Set(_count, Agent.Blackboard.Get(_count, 0) + 1);
+            Agent.Blackboard.Set(_time, (float)Agent.Now);
+            return NodeState.Success;
         }
     }
 }
