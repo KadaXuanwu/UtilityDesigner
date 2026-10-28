@@ -158,8 +158,17 @@ namespace KadaXuanwu.UtilityDesigner.Core {
     // its own (Designs.Copy).
     public sealed class Design {
         public const int FormatVersion = 2;
+        // The guard of the two settings below: at most this many restarts, or children of one node, in one tick; the
+        // rest waits for the next tick.
+        public const int MaxInstantSteps = 64;
 
         public string Name = "";
+        // Beyond v1, off by default. When the running state's tree ends, the agent evaluates at once, in the same
+        // execution tick, and a state that wins again starts its tree again.
+        public bool ChooseAgainWhenTreeEnds;
+        // Beyond v1, off by default. A Sequence or Selector goes on to its next child in the same tick when a child
+        // ends at once.
+        public bool InstantChildren;
         public List<ConsiderationSet> ConsiderationSets = new List<ConsiderationSet>();
         public List<StateSet> StateSets = new List<StateSet>();
 

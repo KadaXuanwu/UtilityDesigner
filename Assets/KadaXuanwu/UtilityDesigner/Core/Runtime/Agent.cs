@@ -166,11 +166,31 @@ namespace KadaXuanwu.UtilityDesigner.Core {
             Evaluate();
         }
 
-        // Ticks the chosen state's tree, if it is still running: v1's Execute.
+        // Ticks the chosen state's tree, if it is still running: v1's Execute. With the design's ChooseAgainWhenTreeEnds,
+        // a tree that ends evaluates at once and ticks the state chosen.
         public void Execute(double now) {
             Now = now;
             State state = ExecutingState;
-            if (state != null && state.Root.State == NodeState.Running && state.Root.Child != null) {
+            if (state == null || state.Root.Child == null) {
+                return;
+            }
+            if (state.Root.State == NodeState.Running) {
+                state.Root.Update();
+            } else if (!Design.ChooseAgainWhenTreeEnds) {
+                return;
+            }
+            // A tree the guard left ended chooses again at the next tick.
+            for (int restarts = 0; Design.ChooseAgainWhenTreeEnds && restarts < Design.MaxInstantSteps; restarts++) {
+                if (state.Root.State == NodeState.Running) {
+                    return;
+                }
+                Evaluate();
+                state = ExecutingState;
+                if (state == null || state.Root.Child == null) {
+                    return;
+                }
+                // The same state again: its tree starts again. Another state is already Running.
+                state.Root.State = NodeState.Running;
                 state.Root.Update();
             }
         }
