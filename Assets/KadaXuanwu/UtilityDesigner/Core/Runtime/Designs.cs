@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Reflection;
 
@@ -31,7 +32,8 @@ namespace KadaXuanwu.UtilityDesigner.Core {
     public static class NodeTypes {
         private static readonly Dictionary<string, Func<Node>> Makers = new Dictionary<string, Func<Node>>();
         private static readonly Dictionary<Type, string> Names = new Dictionary<Type, string>();
-        private static readonly Dictionary<Type, FieldInfo[]> Settings = new Dictionary<Type, FieldInfo[]>();
+        // Filled while designs load, which several threads may do at once (Makers and Names change only at registration).
+        private static readonly ConcurrentDictionary<Type, FieldInfo[]> Settings = new ConcurrentDictionary<Type, FieldInfo[]>();
 
         static NodeTypes() {
             Register<Sequence>();
@@ -85,21 +87,22 @@ namespace KadaXuanwu.UtilityDesigner.Core {
 
         // The node type's settings: its own public fields of a number, a boolean, text, an enum, or a struct of numbers
         // (an engine's vector or colour).
-        public static FieldInfo[] SettingsOf(Node node) {
-            Type type = node.GetType();
-            if (!Settings.TryGetValue(type, out FieldInfo[] fields)) {
-                List<FieldInfo> found = new List<FieldInfo>();
-                foreach (FieldInfo field in type.GetFields(BindingFlags.Public | BindingFlags.Instance)) {
-                    Type declared = field.DeclaringType;
-                    Type of = field.FieldType;
-                    bool saved = IsNumber(of) || of == typeof(string) || of.IsEnum || IsNumbers(of);
-                    if (saved && !field.IsInitOnly && declared != typeof(Node) && declared != typeof(CompositeNode) && declared != typeof(DecoratorNode)) {
-                        found.Add(field);
-                    }
+        public static FieldInfo[] SettingsOf(Node node) => Settings.GetOrAdd(node.GetType(), FindSettings);
+
+        // Empties the cache, so a test sees threads fill it at once.
+        internal static void ForgetSettings() => Settings.Clear();
+
+        private static FieldInfo[] FindSettings(Type type) {
+            List<FieldInfo> found = new List<FieldInfo>();
+            foreach (FieldInfo field in type.GetFields(BindingFlags.Public | BindingFlags.Instance)) {
+                Type declared = field.DeclaringType;
+                Type of = field.FieldType;
+                bool saved = IsNumber(of) || of == typeof(string) || of.IsEnum || IsNumbers(of);
+                if (saved && !field.IsInitOnly && declared != typeof(Node) && declared != typeof(CompositeNode) && declared != typeof(DecoratorNode)) {
+                    found.Add(field);
                 }
-                Settings[type] = fields = found.ToArray();
             }
-            return fields;
+            return found.ToArray();
         }
 
         private static bool IsNumber(Type of) => of == typeof(float) || of == typeof(double) || of == typeof(int) || of == typeof(bool);

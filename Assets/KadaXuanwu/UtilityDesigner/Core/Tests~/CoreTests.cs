@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using KadaXuanwu.UtilityDesigner.Core;
 using KadaXuanwu.UtilityDesigner.Samples;
 using NUnit.Framework;
@@ -1077,6 +1078,39 @@ namespace KadaXuanwu.UtilityDesigner.Tests {
             Assert.That(lines.Length, Is.EqualTo(2));
             Dictionary<string, object> parsed = (Dictionary<string, object>)Json.Parse(lines[1]);
             Assert.That(parsed["executing"], Is.EqualTo("A"));
+        }
+
+        [Test]
+        public void ManyThreadsLoadADesignAtOnce() {
+            string json = Designs.ToJson(Villager.Design());
+            const int Threads = 8;
+            for (int round = 0; round < 100; round++) {
+                NodeTypes.ForgetSettings();
+                using Barrier start = new Barrier(Threads);
+                System.Threading.Tasks.Task<string>[] loads = Enumerable.Range(0, Threads).Select(_ => System.Threading.Tasks.Task.Factory.StartNew(() => {
+                    start.SignalAndWait();
+                    return Designs.ToJson(Designs.FromJson(json));
+                }, System.Threading.Tasks.TaskCreationOptions.LongRunning)).ToArray();
+                Assert.That(loads.Select(load => load.Result), Is.All.EqualTo(json), $"round {round}");
+            }
+        }
+
+        [Test]
+        public void TheTracePrintsNumbersThatRoundTrip() {
+            Bench bench = new Bench();
+            bench.Value("a", 0.9f);
+            bench.State("A", "a");
+            Agent agent = bench.Agent();
+            agent.Trace = new Trace(1);
+            agent.Evaluate(0.1);
+            StringWriter writer = new StringWriter();
+            agent.Trace.Write(writer);
+            Dictionary<string, object> parsed = (Dictionary<string, object>)Json.Parse(writer.ToString());
+            float score = agent.Trace[0].Options[0].Score;
+            // Every digit, the same on Mono and .NET: the default format gives "0.1" and "0.9" on both, which hide the bits.
+            Assert.That(writer.ToString(), Does.Contain("\"time\":0.10000000000000001,"));
+            Assert.That(writer.ToString(), Does.Contain($"\"score\":{score.ToString("G9", System.Globalization.CultureInfo.InvariantCulture)},"));
+            Assert.That((float)Convert.ToDouble(((Dictionary<string, object>)((List<object>)parsed["options"])[0])["score"]), Is.EqualTo(score));
         }
 
         [Test]
