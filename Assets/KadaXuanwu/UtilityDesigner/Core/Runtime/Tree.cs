@@ -112,7 +112,7 @@ namespace KadaXuanwu.UtilityDesigner.Core {
         protected override NodeState OnUpdate() => Child.Update();
     }
 
-    // Sequence, Selector and their random kinds: one child a tick, in order, until a child ends with EndsOn; the other
+    // Sequence, Selector and their random kinds: one child a tick (more with the design's InstantChildren), in order, until a child ends with EndsOn; the other
     // result once every child has run. Without children it fails (v1 throws).
     public abstract class OrderedNode : CompositeNode {
         private readonly NodeState _endsOn;
@@ -141,18 +141,23 @@ namespace KadaXuanwu.UtilityDesigner.Core {
             if (_order.Count == 0) {
                 return NodeState.Failure;
             }
-            NodeState state = Nodes[_order[_current]].Update();
-            if (state == NodeState.Running || state == _endsOn) {
-                return state;
-            }
-            // Success in a sequence, Failure in a selector: on to the next child, next tick.
-            if (state != NodeState.Disabled) {
+            int steps = Agent.Design.InstantChildren ? Design.MaxInstantSteps : 1;
+            for (int step = 0; step < steps; step++) {
+                NodeState state = Nodes[_order[_current]].Update();
+                if (state == NodeState.Running || state == _endsOn) {
+                    return state;
+                }
+                if (state == NodeState.Disabled) {
+                    return NodeState.Running;
+                }
+                // Success in a sequence, Failure in a selector: on to the next child, next tick (or this one, with
+                // InstantChildren).
                 _current++;
+                if (_current == _order.Count) {
+                    return _endsOn == NodeState.Failure ? NodeState.Success : NodeState.Failure;
+                }
             }
-            if (_current < _order.Count) {
-                return NodeState.Running;
-            }
-            return _endsOn == NodeState.Failure ? NodeState.Success : NodeState.Failure;
+            return NodeState.Running;
         }
     }
 
@@ -243,16 +248,40 @@ namespace KadaXuanwu.UtilityDesigner.Core {
         }
     }
 
-    // Runs its child again whenever it ends.
+    public enum RepeatUntil {
+        None,
+        Success,
+        Failure,
+    }
+
+    // Runs its child again whenever it ends: forever (v1), Count times, or until the child ends with Until's result.
+    // With a count or an until, it then ends with its child's result.
     public sealed class Repeat : DecoratorNode {
-        public override string Description => "Always returns running.";
+        // 0: forever.
+        public int Count;
+        public RepeatUntil Until;
+
+        private int _runs;
+
+        public override string Description => "Runs its child again whenever it ends.\n"
+            + "Count: how many times (0: forever). Until: ends early when the child ends with that result.\n"
+            + "Returns running until then, and the child's result once it ends.";
+
+        protected override void OnEnable() {
+            _runs = 0;
+        }
 
         protected override NodeState OnUpdate() {
             if (Child == null) {
                 return NodeState.Failure;
             }
-            Child.Update();
-            return NodeState.Running;
+            NodeState state = Child.Update();
+            if (state == NodeState.Running) {
+                return NodeState.Running;
+            }
+            bool until = Until == RepeatUntil.Success && state == NodeState.Success || Until == RepeatUntil.Failure && state == NodeState.Failure;
+            _runs++;
+            return until || Count > 0 && _runs >= Count ? state : NodeState.Running;
         }
     }
 

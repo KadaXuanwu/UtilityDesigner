@@ -63,7 +63,7 @@ the end or when terminated; a composite or decorator terminates its children fir
 | Random Selector | Core | `RandomSelectorTriesEveryChildInASeededOrder` |
 | Random Sequence | Core | `RandomSequenceRunsEveryChildOnceInASeededOrder` |
 | Invert, Success, Failure | Core | `TheDecorators` |
-| Repeat | Core | `RepeatRunsItsChildAgainWhateverItReturns` |
+| Repeat | Core | `RepeatRunsItsChildAgainWhateverItReturns`; its Count and Until, beyond v1: `RepeatWithACountOrAnUntilEndsWithItsChildsResult` |
 | Wait Fixed | Core | `WaitFixedSucceedsOnceItsDurationHasPassed` |
 | Wait Random | Core | `WaitRandomWaitsASeededDurationBetweenItsMinAndMax` |
 | Lock State, Unlock State | Core | `LockStateAndUnlockState` |
@@ -125,10 +125,12 @@ Consideration without its set fails, a state without a tree is simply not ticked
 
 ## For discussion
 
-What looks wrong in v1. The core does every one of these as v1 does.
+What looks wrong in v1. The core does every one of these as v1 does. Points 1, 12 and 13 are kept by default, and a
+setting changes each (the project README, Beyond v1).
 
 1. **A finished tree leaves the agent idle for as long as its state stays the best**, not only until the next
-   evaluation: the evaluation returns the same state, and a tree is only started when the state changes.
+   evaluation: the evaluation returns the same state, and a tree is only started when the state changes. Kept by
+   default; the design's Choose Again (`ChooseAgainWhenTreeEnds`) changes it.
 2. **When every state is passed over by its fail chance, the last one checked is taken**: the lowest scoring.
 3. **The fail chance is rolled every evaluation**, so how long a state is passed over depends on the evaluation tick
    rate: at 10 evaluations a second, a fail chance of 0.5 delays a state by a tenth of a second on average.
@@ -145,8 +147,9 @@ What looks wrong in v1. The core does every one of these as v1 does.
 9. **Equal and Not Equal compare whole numbers** (both sides rounded, halves to even): 2.4 equals 1.6.
 10. **Compare Consideration treats a consideration its set does not have as 0**, where Set and Change fail.
 11. **Changing the state set takes effect at the next evaluation**, and not at all while the state is locked.
-12. **Repeat has no count and ignores its child's result.**
+12. **Repeat has no count and ignores its child's result.** Kept by default; Repeat's Count and Until change it.
 13. **Sequence and Selector run one child per tick**, so a sequence of five instant nodes takes five execution ticks.
+    Kept by default; the design's Instant Children (`InstantChildren`) changes it.
 14. **Crashes**, which the core turns into failures (above): a composite without children, a decorator or root without
     a child being terminated, Lock State Consideration without its set.
 15. **The log prints a local set's template values**, not the agent's own. The core's log prints the agent's: the one

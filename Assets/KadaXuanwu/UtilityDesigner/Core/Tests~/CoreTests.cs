@@ -442,6 +442,47 @@ namespace KadaXuanwu.UtilityDesigner.Tests {
         }
 
         [Test]
+        public void ChooseAgainStartsAFinishedTreeInTheSameTick() {
+            Bench bench = Two(0.9f, 0.4f, out State a, out _);
+            bench.Design.ChooseAgainWhenTreeEnds = true;
+            Script twice = new Script(NodeState.Success, NodeState.Running);
+            a.Tree = twice;
+            Agent agent = bench.Agent();
+            agent.Evaluate(0.0);
+            agent.Execute(0.0);
+            Assert.That(agent.ExecutingState, Is.SameAs(a));
+            Assert.That((twice.Updates, twice.Enables, a.TreeState), Is.EqualTo((2, 2, NodeState.Running)), "chosen again, started again");
+        }
+
+        [Test]
+        public void ChooseAgainTicksTheStateThatWinsWhenTheTreeEnds() {
+            Bench bench = Two(0.9f, 0.4f, out State a, out State b);
+            bench.Design.ChooseAgainWhenTreeEnds = true;
+            a.Tree = new ChangeConsideration { ConsiderationSetName = "S", ConsiderationName = "a", Amount = -0.8f };
+            Script next = new Script(NodeState.Running);
+            b.Tree = next;
+            Agent agent = bench.Agent();
+            agent.Evaluate(0.0);
+            agent.Execute(0.0);
+            Assert.That(agent.ExecutingState, Is.SameAs(b));
+            Assert.That(next.Updates, Is.EqualTo(1), "ticked in the same tick");
+        }
+
+        [Test]
+        public void ChooseAgainStopsAtTheGuardAndCarriesOnNextTick() {
+            Bench bench = Two(0.9f, 0.4f, out State a, out _);
+            bench.Design.ChooseAgainWhenTreeEnds = true;
+            Script always = new Script(NodeState.Success);
+            a.Tree = always;
+            Agent agent = bench.Agent();
+            agent.Evaluate(0.0);
+            agent.Execute(0.0);
+            Assert.That(always.Updates, Is.EqualTo(1 + Design.MaxInstantSteps));
+            agent.Execute(1.0);
+            Assert.That(always.Updates, Is.EqualTo(1 + 2 * Design.MaxInstantSteps), "the ended tree chooses again without an evaluation");
+        }
+
+        [Test]
         public void SwitchingTerminatesTheRunningNodes() {
             Bench bench = Two(0.9f, 0.4f, out State a, out _);
             Script busy = new Script(NodeState.Running);
@@ -558,8 +599,9 @@ namespace KadaXuanwu.UtilityDesigner.Tests {
         private const NodeState F = NodeState.Failure;
 
         // An agent whose one state runs the tree; "v" is a consideration at 2.
-        private static Agent Run(Node tree, out State state, ulong seed = 1) {
+        private static Agent Run(Node tree, out State state, ulong seed = 1, bool instant = false) {
             Bench bench = new Bench();
+            bench.Design.InstantChildren = instant;
             bench.Value("v", 2f);
             state = bench.State("State");
             state.BaseScore = 1f;
@@ -571,8 +613,8 @@ namespace KadaXuanwu.UtilityDesigner.Tests {
         }
 
         // The tree's state after each of the ticks, a second apart from 0.
-        private static NodeState[] Ticks(Node tree, int ticks, ulong seed = 1) {
-            Agent agent = Run(tree, out State state, seed);
+        private static NodeState[] Ticks(Node tree, int ticks, ulong seed = 1, bool instant = false) {
+            Agent agent = Run(tree, out State state, seed, instant);
             NodeState[] states = new NodeState[ticks];
             for (int i = 0; i < ticks; i++) {
                 agent.Execute(i);
@@ -593,6 +635,15 @@ namespace KadaXuanwu.UtilityDesigner.Tests {
             Assert.That(Ticks(With(new Sequence(), new Script(S), new Script(F), never), 3), Is.EqualTo(new[] { R, F, F }));
             Assert.That(never.Updates, Is.EqualTo(0));
             Assert.That(Ticks(new Sequence(), 1), Is.EqualTo(new[] { F }), "no children (v1 throws)");
+        }
+
+        [Test]
+        public void InstantChildrenRunsChildrenThatEndAtOnceInOneTick() {
+            Assert.That(Ticks(With(new Sequence(), new Script(S), new Script(R, S), new Script(S)), 2, instant: true), Is.EqualTo(new[] { R, S }));
+            Assert.That(Ticks(With(new Selector(), new Script(F), new Script(F), new Script(S)), 1, instant: true), Is.EqualTo(new[] { S }));
+            Assert.That(Ticks(With(new RandomSequence(), new Script(S), new Script(F)), 1, instant: true), Is.EqualTo(new[] { F }));
+            Sequence many = With(new Sequence(), Enumerable.Range(0, Design.MaxInstantSteps + 10).Select(_ => (Node)new Script(S)).ToArray());
+            Assert.That(Ticks(many, 2, instant: true), Is.EqualTo(new[] { R, S }), "the guard: the rest waits for the next tick");
         }
 
         [Test]
@@ -667,6 +718,14 @@ namespace KadaXuanwu.UtilityDesigner.Tests {
             Assert.That(Ticks(new Repeat { Child = child }, 4), Is.EqualTo(new[] { R, R, R, R }));
             Assert.That(child.Enables, Is.EqualTo(3), "started again after the success and after the failure");
             Assert.That(child.Awakes, Is.EqualTo(1));
+        }
+
+        [Test]
+        public void RepeatWithACountOrAnUntilEndsWithItsChildsResult() {
+            Assert.That(Ticks(new Repeat { Count = 3, Child = new Script(S, F, R, S) }, 5), Is.EqualTo(new[] { R, R, R, S, S }));
+            Assert.That(Ticks(new Repeat { Until = RepeatUntil.Failure, Child = new Script(S, S, F) }, 3), Is.EqualTo(new[] { R, R, F }));
+            Assert.That(Ticks(new Repeat { Until = RepeatUntil.Success, Child = new Script(F, R, S) }, 3), Is.EqualTo(new[] { R, R, S }));
+            Assert.That(Ticks(new Repeat { Count = 2, Until = RepeatUntil.Success, Child = new Script(F) }, 2), Is.EqualTo(new[] { R, F }));
         }
 
         [Test]
@@ -906,6 +965,25 @@ namespace KadaXuanwu.UtilityDesigner.Tests {
             Assert.That(back.StateSets[0].States.Select(state => state.Name), Is.EqualTo(new[] { "Eat", "Sleep", "Work", "Wander" }));
             Assert.That(back.ConsiderationSets[0].Local, Is.True);
             Assert.That(back.ConsiderationSets[1].Considerations[0].SetMaxValue, Is.False);
+        }
+
+        [Test]
+        public void TheSettingsBeyondV1SurviveJsonAndAreOffWithout() {
+            Bench bench = new Bench();
+            bench.State("State").Tree = new Repeat { Count = 4, Until = RepeatUntil.Failure, Child = new WaitFixed() };
+            string off = Designs.ToJson(bench.Design);
+            Assert.That(off, Does.Not.Contain("chooseAgainWhenTreeEnds").And.Not.Contain("instantChildren"), "a design without them saves as before");
+            Design back = Designs.FromJson(off);
+            Assert.That((back.ChooseAgainWhenTreeEnds, back.InstantChildren), Is.EqualTo((false, false)));
+            Repeat repeat = (Repeat)back.StateSets[0].States[0].Tree;
+            Assert.That((repeat.Count, repeat.Until), Is.EqualTo((4, RepeatUntil.Failure)));
+            bench.Design.ChooseAgainWhenTreeEnds = true;
+            bench.Design.InstantChildren = true;
+            back = Designs.Copy(bench.Design);
+            Assert.That((back.ChooseAgainWhenTreeEnds, back.InstantChildren), Is.EqualTo((true, true)));
+            Repeat old = (Repeat)Designs.FromJson(
+                "{\"format\": 2, \"stateSets\": [{\"name\": \"Main\", \"states\": [{\"name\": \"State\", \"tree\": {\"type\": \"Repeat\"}}]}]}").StateSets[0].States[0].Tree;
+            Assert.That((old.Count, old.Until), Is.EqualTo((0, RepeatUntil.None)), "a Repeat saved before them repeats forever");
         }
 
         [Test]

@@ -152,9 +152,17 @@ namespace KadaXuanwu.UtilityDesigner.Core {
                 }
                 stateSets.Add(new Dictionary<string, object> { ["name"] = set.Name, ["states"] = states });
             }
-            return Json.Write(new Dictionary<string, object> {
-                ["format"] = Design.FormatVersion, ["name"] = design.Name, ["considerationSets"] = considerationSets, ["stateSets"] = stateSets,
-            });
+            Dictionary<string, object> root = new Dictionary<string, object> { ["format"] = Design.FormatVersion, ["name"] = design.Name };
+            // Written only when on, so a design without them saves as before.
+            if (design.ChooseAgainWhenTreeEnds) {
+                root["chooseAgainWhenTreeEnds"] = true;
+            }
+            if (design.InstantChildren) {
+                root["instantChildren"] = true;
+            }
+            root["considerationSets"] = considerationSets;
+            root["stateSets"] = stateSets;
+            return Json.Write(root);
         }
 
         public static Design FromJson(string text) {
@@ -163,7 +171,10 @@ namespace KadaXuanwu.UtilityDesigner.Core {
             if (format != Design.FormatVersion) {
                 throw new FormatException($"A design of format {format}; this Utility Designer reads format {Design.FormatVersion}.");
             }
-            Design design = new Design { Name = Text(root, "name") };
+            Design design = new Design {
+                Name = Text(root, "name"), ChooseAgainWhenTreeEnds = Flag(root, "chooseAgainWhenTreeEnds", false),
+                InstantChildren = Flag(root, "instantChildren", false),
+            };
             foreach (object item in List(root, "considerationSets")) {
                 Dictionary<string, object> map = (Dictionary<string, object>)item;
                 ConsiderationSet set = new ConsiderationSet { Name = Text(map, "name"), Local = Flag(map, "local", false) };
