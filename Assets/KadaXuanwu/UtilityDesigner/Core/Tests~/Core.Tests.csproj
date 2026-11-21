@@ -3,6 +3,8 @@
   <!-- The core's tests, outside Unity (a folder ending in ~ is one Unity skips): dotnet test. -->
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
+    <!-- Runs on a newer .NET too, when the PC has no .NET 9 runtime. -->
+    <RollForward>Major</RollForward>
     <LangVersion>9.0</LangVersion>
     <Nullable>disable</Nullable>
     <ImplicitUsings>disable</ImplicitUsings>

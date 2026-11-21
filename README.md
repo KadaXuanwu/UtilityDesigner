@@ -20,7 +20,8 @@ Everything is under `Assets/KadaXuanwu/UtilityDesigner`:
 - `Runtime`: the `UtilityDesigner` component, Consideration Set assets, `SceneReferences`, and the nodes that need
   Unity (Move To Position, Move To Transform, Compare Distance, Debug Log, Debug Breakpoint).
 - `Editor`: the Utility Designer window, the Consideration Set window, the component's inspector. Tests in
-  `Editor/Tests`, run from Unity's Test Runner.
+  `Editor/Tests`, run from Unity's Test Runner, or with `unity command test run` in a shell while the editor is open
+  (the project has Unity's `com.unity.pipeline` package for the Unity CLI).
 - `Demos`: the Survival and Daily Routine behaviours and scripts, and `Threaded`: agents ticked on a worker thread
   and offered to the window. Their scenes are in three packages, one for each
   render pipeline (`DemosBuiltIn`, `DemosURP`, `DemosHDRP`): import the one for your pipeline, and Unity's AI Navigation
